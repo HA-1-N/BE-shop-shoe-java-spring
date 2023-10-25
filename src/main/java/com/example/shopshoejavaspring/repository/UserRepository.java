@@ -10,10 +10,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByNameContainsAndEmailContains(@Param("name") String name, @Param("email") String email , Pageable pageable);
 
+//    Optional findByEmail(String userName);
 }
