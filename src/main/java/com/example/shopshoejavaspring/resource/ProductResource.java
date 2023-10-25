@@ -59,4 +59,12 @@ public class ProductResource {
         log.debug("END - /api/product/update");
         return ResponseEntity.ok().body(data);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) throws IOException {
+        log.debug("BEGIN - /api/product/delete/" + id);
+        productService.delete(id);
+        log.debug("END - /api/product/delete/" + id);
+        return ResponseEntity.ok().body("Delete success");
+    }
 }

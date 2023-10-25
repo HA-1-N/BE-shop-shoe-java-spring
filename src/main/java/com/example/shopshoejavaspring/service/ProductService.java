@@ -161,4 +161,8 @@ public class ProductService {
 
         return product;
     }
+
+    public void delete(Long id) {
+        productRepository.deleteById(id);
+    }
 }
