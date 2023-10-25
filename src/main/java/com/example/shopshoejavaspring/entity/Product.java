@@ -17,6 +17,7 @@ import java.util.Set;
 @Setter
 @RequiredArgsConstructor
 @Table(name = "product")
+//@EqualsAndHashCode(exclude = {"productImages", "productSizes", "productColors", "orderDetails"})
 public class Product {
 
     @Id
@@ -42,7 +43,7 @@ public class Product {
 
     @JsonIgnoreProperties(value = {"product", "category"}, allowGetters = true) // khi trả về json thì sẽ bỏ qua thuộc tính này
     @ManyToOne  // nhiều sản phẩm thuộc về 1 thương hiệu
-    @JoinColumn(name = "caterogy_id", insertable = true, updatable = false)
+    @JoinColumn(name = "category_id", insertable = true, updatable = false)
     private Category category = new Category();
 
     @JsonIgnoreProperties(value = {"product", "brand"}, allowGetters = true) // khi trả về json thì sẽ bỏ qua thuộc tính này

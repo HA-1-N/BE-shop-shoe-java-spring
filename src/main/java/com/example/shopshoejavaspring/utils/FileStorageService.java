@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -38,5 +40,21 @@ public class FileStorageService {
     public String uploadImage(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
         return uploadResult.get("url").toString();
+    }
+
+    public List<String> uploadImages(List<MultipartFile> files) throws IOException {
+        List<String> imageUrls = new ArrayList<>();
+
+        for (MultipartFile file : files) {
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageUrl = (String) uploadResult.get("url");
+            imageUrls.add(imageUrl);
+        }
+
+        return imageUrls;
+    }
+
+    public void deleteImage(String image) {
+
     }
 }
