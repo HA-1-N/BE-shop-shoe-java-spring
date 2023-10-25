@@ -32,5 +32,5 @@ public class UpdateProductDTO {
 
     private List<Long> colorId;
 
-    private List<Long> productImageIds;
+    private List<Long> productDeleteImageIds;
 }
