@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
@@ -15,24 +17,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig  {
 
-//    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtAuthFilter jwtAuthFilter;
 //
 //    private final AuthenticationProvider authenticationProvider;
 
-//    @Bean
-//    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//            .csrf()
-//            .disable()
-//            .authorizeRequests()
-//            .anyRequest()
-//            .authenticated()
-//            .and()
-//            .httpBasic();
-//        return http.build();
-//    }
+    @Bean
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf() // config csrf
+                .disable() // disable csrf
+            .authorizeRequests() // config authorize request
+                .antMatchers(HttpMethod.GET, "/api/product/get-by-id/*").permitAll()
+        .anyRequest().authenticated() // all request must be authenticated
+        .and()
+        .httpBasic();
+        return http.build();
+    }
+
+
 
 //    @Bean
 //    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -51,4 +55,5 @@ public class SecurityConfig {
 //            .httpBasic();
 //        return http.build();
 //    }
+
 }
