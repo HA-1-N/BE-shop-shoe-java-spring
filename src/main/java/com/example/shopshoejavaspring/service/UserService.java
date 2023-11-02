@@ -36,30 +36,6 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final FileStorageService fileStorageService;
 
-    public User register(UserDTO userDTO, MultipartFile file) throws IOException {
-        User user = new User();
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        user.setPhone(userDTO.getPhone());
-        user.setGender(userDTO.getGender());
-        user.setAge(userDTO.getAge());
-        user.setDateOfBirth(userDTO.getDateOfBirth());
-
-        String imageUrl = fileStorageService.uploadImage(file);
-        user.setImage(imageUrl);
-
-        Set<Role> roles = userDTO.getRoleIds().stream() //get roleIds from userDTO
-                .map(roleId -> roleRepository.findById(roleId)) //get role by roleId
-                .filter(Optional::isPresent) // filter role is present
-                .map(Optional::get) // get role
-                .collect(Collectors.toSet()); // collect to set
-
-        user.setRoles(roles);
-        userRepository.save(user);
-        return user;
-    }
-
     public List<ListUserDTO> getAllUser() {
         List<User> users = userRepository.findAll();
 //        List<ListUserDTO> listUserDTO = new ArrayList<>();

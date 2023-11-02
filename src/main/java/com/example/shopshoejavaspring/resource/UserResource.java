@@ -30,16 +30,6 @@ public class UserResource {
     @Autowired
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestParam(value = "file", required = false)MultipartFile file, @Valid @RequestPart("data") UserDTO userDTO) throws IOException {
-        log.debug("BEGIN - /api/user/register");
-        User user = userService.register(userDTO, file);
-        userDTO.setId(user.getId());
-        userDTO.setRoles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getCode(), role.getText())).collect(Collectors.toList()));
-        log.debug("END - /api/user/register");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
-    }
-
     @PostMapping("/filter")
     public ResponseEntity<List<ListUserDTO>> filterUser(@RequestBody FilterUserDTO filterUserDTO, Pageable pageable){
         log.debug("BEGIN - /api/user/filter");

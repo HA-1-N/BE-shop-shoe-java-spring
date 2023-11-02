@@ -22,11 +22,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
+                .cors() // config cors
+                .and()
                 .csrf() // config csrf
                 .disable() // disable csrf
-                .authorizeRequests() // config authorize request
+                .authorizeHttpRequests() // config authorize request
                 .requestMatchers(request -> request.getServletPath().startsWith("/api/auth"))
-                .permitAll()
+                .permitAll() // all request start with /api/auth is permit all
+//                .antMatchers("/api/product/filter")
+//                .permitAll()
                 .anyRequest()
                 .authenticated() // all request must be authenticated
                 .and()
