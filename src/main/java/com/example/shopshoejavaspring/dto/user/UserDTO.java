@@ -42,6 +42,8 @@ public class UserDTO {
 
     private String image;
 
+    private String token;
+
     private List<Long> roleIds = new ArrayList<>();
 
     private List<RoleDTO> roles = new ArrayList<>();
