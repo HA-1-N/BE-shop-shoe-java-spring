@@ -133,4 +133,9 @@ public class UserService {
             throw new RuntimeException("User not found");
         }
     }
+
+//    public Optional<UserDTO> getUserWithAuthorities() {
+//        Optional<User> userOptional = SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByEmailIgnoreCase);
+//        return null;
+//    }
 }

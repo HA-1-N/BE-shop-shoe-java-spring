@@ -8,6 +8,7 @@ import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,6 +53,14 @@ public class UserResource {
         log.debug("END - /api/user/get-by-id/{}", id);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
+
+//    @GetMapping("/current-user")
+//    public ResponseEntity<UserDTO> getCurrentUser() {
+//        log.debug("BEGIN - /api/user/current-user");
+//        Optional<UserDTO> userDTO = userService.getUserWithAuthorities();
+//        log.debug("END - /api/user/current-user");
+//        return ResponseEntity.status(HttpStatus.OK).body(userDTO.get());
+//    }
 
     @PostMapping("/update/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable("id") Long id, @RequestParam(value = "file", required = false)MultipartFile file, @Valid @RequestPart("data") UserDTO userDTO) throws IOException {
