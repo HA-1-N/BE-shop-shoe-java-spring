@@ -65,7 +65,13 @@ public class UserService {
     }
 
     public Page<ListUserDTO> filterUser(FilterUserDTO filterUserDTO, Pageable pageable) {
-        Page<User> users = userRepository.findAllByNameContainsAndEmailContains(filterUserDTO.getName(), filterUserDTO.getEmail(), pageable);
+        Page<User> users = userRepository.filterUser(
+                filterUserDTO.getName(),
+                filterUserDTO.getEmail(),
+                filterUserDTO.getGender(),
+                filterUserDTO.getPhone(),
+                filterUserDTO.getDateOfBirth(),
+                pageable);
         List<ListUserDTO> listUserDTO = userMapper.toDtoUser(users.getContent());
         return new PageImpl<>(listUserDTO, pageable, users.getTotalElements());
 

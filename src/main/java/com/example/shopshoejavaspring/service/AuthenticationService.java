@@ -1,6 +1,7 @@
 package com.example.shopshoejavaspring.service;
 
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
+import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
 import com.example.shopshoejavaspring.entity.Role;
@@ -111,4 +112,17 @@ public class AuthenticationService {
         return user;
     }
 
+    public Boolean verifyEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public String resetPassword(ResetPasswordDTO resetPasswordDTO) {
+        User user = userRepository.findUserByEmailContains(resetPasswordDTO.getEmail());
+        if (user == null) {
+            return null;
+        }
+        user.setPassword(passwordEncoder.encode(resetPasswordDTO.getPassword()));
+        userRepository.save(user);
+        return "Reset password success";
+    }
 }
