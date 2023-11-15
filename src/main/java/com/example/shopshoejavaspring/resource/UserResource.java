@@ -6,12 +6,14 @@ import com.example.shopshoejavaspring.dto.user.ListUserDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.service.UserService;
+import javafx.scene.control.Pagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +38,12 @@ public class UserResource {
     public ResponseEntity<List<ListUserDTO>> filterUser(@RequestBody FilterUserDTO filterUserDTO, Pageable pageable){
         log.debug("BEGIN - /api/user/filter");
         Page<ListUserDTO> listUser = userService.filterUser(filterUserDTO, pageable);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listUser.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(listUser.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(listUser.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(listUser.getSize()));
         log.debug("END - /api/user/filter");
         return ResponseEntity.status(HttpStatus.OK).body(listUser.getContent());
     }
