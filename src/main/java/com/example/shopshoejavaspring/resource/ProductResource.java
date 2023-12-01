@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,11 @@ public class ProductResource {
     public ResponseEntity<List<ProductDTO>> filterProduct(@RequestBody FilterProductDTO filterProductDTO, Pageable pageable) throws IOException {
         log.debug("BEGIN - /api/product/filter");
         Page<ProductDTO> listProduct = productService.filter(filterProductDTO, pageable);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listProduct.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(listProduct.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(listProduct.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(listProduct.getSize()));
         log.debug("END - /api/product/filter");
         return ResponseEntity.status(HttpStatus.OK).body(listProduct.getContent());
     }
