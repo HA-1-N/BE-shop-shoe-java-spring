@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-@Transactional
+@Service // Đánh dấu đây là 1 bean
+@RequiredArgsConstructor // Inject bean
+@Transactional // Đảm bảo tính toàn vẹn dữ liệu
 public class ProductService {
 
 //    @Autowired // Inject bean
