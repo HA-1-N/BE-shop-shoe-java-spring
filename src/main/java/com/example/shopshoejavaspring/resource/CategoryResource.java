@@ -48,7 +48,7 @@ public class CategoryResource {
         headers.add("X-Total-Pages", String.valueOf(listCategory.getTotalPages()));
         headers.add("X-Page-Number", String.valueOf(listCategory.getNumber()));
         headers.add("X-Page-Size", String.valueOf(listCategory.getSize()));
-        return ResponseEntity.status(HttpStatus.OK).body(listCategory.getContent());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listCategory.getContent());
     }
 
     @PostMapping("/update/{id}")

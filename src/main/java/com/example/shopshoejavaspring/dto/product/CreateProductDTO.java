@@ -29,7 +29,7 @@ public class CreateProductDTO {
 
     private Long categoryId;
 
-    private List<Long> sizeId;
+    private Long sizeId;
 
-    private List<Long> colorId;
+    private Long colorId;
 }
