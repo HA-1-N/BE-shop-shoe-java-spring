@@ -47,7 +47,7 @@ public class ProductResource {
         headers.add("X-Page-Number", String.valueOf(listProduct.getNumber()));
         headers.add("X-Page-Size", String.valueOf(listProduct.getSize()));
         log.debug("END - /api/product/filter");
-        return ResponseEntity.status(HttpStatus.OK).body(listProduct.getContent());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listProduct.getContent());
     }
 
     @GetMapping("/get-by-id/{id}")

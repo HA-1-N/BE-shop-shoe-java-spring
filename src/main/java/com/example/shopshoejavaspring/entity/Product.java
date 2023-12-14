@@ -58,11 +58,11 @@ public class Product {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "color_id", insertable = true, updatable = false)
-    private Color colors = new Color();
+    private Color color = new Color();
 
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"product", "size"}, allowGetters = true)
     @ManyToOne
     @JoinColumn(name = "size_id", insertable = true, updatable = false)
-    private Size sizes = new Size();
+    private Size size = new Size();
 
 }

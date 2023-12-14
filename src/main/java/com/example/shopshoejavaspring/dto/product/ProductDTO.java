@@ -34,9 +34,9 @@ public class ProductDTO {
 
     private BrandDTO brand;
 
-    private SizeDTO sizes;
+    private SizeDTO size;
 
-    private ColorDTO colors;
+    private ColorDTO color;
 
     private List<ProductImageDTO> productImages;
 
