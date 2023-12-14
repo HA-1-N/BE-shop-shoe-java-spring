@@ -26,13 +26,4 @@ public class Color {
     @Column(name = "code")
     @NotNull
     private String code;
-
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "product_color",
-            joinColumns = {@JoinColumn(name = "color_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")}
-    )
-    private Set<Product> products = new HashSet<>();
 }

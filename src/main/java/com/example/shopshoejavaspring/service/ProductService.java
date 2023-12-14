@@ -64,11 +64,11 @@ public class ProductService {
          product.setCategory(category);
          product.setBrand(brand);
 
-         Set<Size> sizes = sizeRepository.findAllByIdIn(data.getSizeId());
-         Set<Color> colors = colorRepository.findAllByIdIn(data.getColorId());
+         Color color = colorRepository.findById(data.getColorId()).orElseThrow(() -> new RuntimeException("Color not found"));
+         Size size = sizeRepository.findById(data.getSizeId()).orElseThrow(() -> new RuntimeException("Size not found"));
 
-         product.setSizes(sizes);
-         product.setColors(colors);
+         product.setColor(color);
+         product.setSize(size);
 
         List<ProductImage> productImages = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -123,11 +123,11 @@ public class ProductService {
         product.setCategory(category);
         product.setBrand(brand);
 
-        Set<Size> sizes = sizeRepository.findAllByIdIn(data.getSizeId());
-        Set<Color> colors = colorRepository.findAllByIdIn(data.getColorId());
+        Color color = colorRepository.findById(data.getColorId()).orElseThrow(() -> new RuntimeException("Color not found"));
+        Size size = sizeRepository.findById(data.getSizeId()).orElseThrow(() -> new RuntimeException("Size not found"));
 
-        product.setSizes(sizes);
-        product.setColors(colors);
+        product.setColor(color);
+        product.setSize(size);
 
         List<ProductImage> productImages = product.getProductImages();
 
