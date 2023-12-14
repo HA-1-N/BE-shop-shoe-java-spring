@@ -21,13 +21,4 @@ public class Size {
     @Column(name = "name")
     private String name;
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "product_size",
-            joinColumns = {@JoinColumn(name = "size_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")}
-    )
-    private Set<Product> products = new HashSet<>();
-
 }

@@ -56,17 +56,13 @@ public class Product {
     private List<ProductImage> productImages = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "product_color",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "color_id"))
-    private Set<Color> colors = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "color_id", insertable = true, updatable = false)
+    private Color colors = new Color();
 
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "product_size",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "size_id"))
-    private Set<Size> sizes = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "size_id", insertable = true, updatable = false)
+    private Size sizes = new Size();
 
 }
