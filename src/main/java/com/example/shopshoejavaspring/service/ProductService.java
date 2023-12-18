@@ -93,8 +93,8 @@ public class ProductService {
                 filterProductDTO.getStatus(),
                 filterProductDTO.getCategoryId(),
                 filterProductDTO.getBrandId(),
-//                filterProductDTO.getSizeId(),
-//                filterProductDTO.getColorId(),
+                filterProductDTO.getSizeId(),
+                filterProductDTO.getColorId(),
                 filterProductDTO.getMinPrice(),
                 filterProductDTO.getMaxPrice(),
                 pageable);
