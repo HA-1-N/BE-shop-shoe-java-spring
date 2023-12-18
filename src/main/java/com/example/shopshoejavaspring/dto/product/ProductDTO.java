@@ -4,6 +4,7 @@ import com.example.shopshoejavaspring.dto.brand.BrandDTO;
 import com.example.shopshoejavaspring.dto.category.CategoryDTO;
 import com.example.shopshoejavaspring.dto.color.ColorDTO;
 import com.example.shopshoejavaspring.dto.productImage.ProductImageDTO;
+import com.example.shopshoejavaspring.dto.productQuantity.ProductQuantityDTO;
 import com.example.shopshoejavaspring.dto.size.SizeDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,8 +25,6 @@ public class ProductDTO {
 
     private Double price;
 
-    private Integer quantity;
-
     private String description;
 
     private Long status;
@@ -34,10 +33,8 @@ public class ProductDTO {
 
     private BrandDTO brand;
 
-    private SizeDTO size;
-
-    private ColorDTO color;
-
     private List<ProductImageDTO> productImages;
+
+    private List<ProductQuantityDTO> productQuantities;
 
 }

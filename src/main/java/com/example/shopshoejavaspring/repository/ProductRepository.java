@@ -21,8 +21,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "and (:status is null or p.status = :status) " +
             "and (:categoryId is null or p.category_id = :categoryId) " +
             "and (:brandId is null or p.brand_id = :brandId) " +
-            "and ( coalesce(null, :sizeId) is null or p.size_id in (:sizeId) ) " +
-            "and ( coalesce(null, :colorId) is null or p.color_id in (:colorId) ) " +
+//            "and ( coalesce(null, :sizeId) is null or p.size_id in (:sizeId) ) " +
+//            "and ( coalesce(null, :colorId) is null or p.color_id in (:colorId) ) " +
             "and (:minPrice is null or p.price >= :minPrice) " +
             "and (:maxPrice is null or p.price <= :maxPrice) " +
             "group by p.id " +
@@ -32,9 +32,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("status") Long status,
             @Param("categoryId") Long categoryId,
             @Param("brandId") Long brandId,
-            @Param("sizeId") List<Long> sizeId,
-            @Param("colorId") List<Long> colorId,
+//            @Param("sizeId") List<Long> sizeId,
+//            @Param("colorId") List<Long> colorId,
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
             Pageable pageable);
+
+    Product findByNameContains(String name);
 }
