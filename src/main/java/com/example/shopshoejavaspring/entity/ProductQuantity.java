@@ -1,10 +1,13 @@
 package com.example.shopshoejavaspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -35,4 +38,8 @@ public class ProductQuantity {
 
     @Column(name = "status")
     private Long status;
+
+    @OneToMany(mappedBy = "productQuantity", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều ảnh
+    @JsonIgnore
+    private List<ProductQuantityImage> productQuantityImages = new ArrayList<>();
 }
