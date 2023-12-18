@@ -6,11 +6,8 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.BatchSize;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -32,8 +29,8 @@ public class Product {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "quantity")
-    private Integer quantity;
+//    @Column(name = "quantity")
+//    private Integer quantity;
 
     @Column(name = "description")
     private String description;
@@ -55,14 +52,26 @@ public class Product {
     @JsonIgnore
     private List<ProductImage> productImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "color_id", insertable = true, updatable = false)
-    private Color color = new Color();
+    private List<ProductQuantity> productQuantities = new ArrayList<>();
 
-    @JsonIgnoreProperties(value = {"product", "size"}, allowGetters = true)
-    @ManyToOne
-    @JoinColumn(name = "size_id", insertable = true, updatable = false)
-    private Size size = new Size();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
+//    @JsonIgnore
+//    private List<ProductQuantity> productQuantities = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
+//    @JsonIgnore
+//    private List<ProductSize> productSizes = new ArrayList<>();
+
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name = "color_id", insertable = true, updatable = false)
+//    private Color color = new Color();
+//
+//    @JsonIgnoreProperties(value = {"product", "size"}, allowGetters = true)
+//    @ManyToOne
+//    @JoinColumn(name = "size_id", insertable = true, updatable = false)
+//    private Size size = new Size();
 
 }

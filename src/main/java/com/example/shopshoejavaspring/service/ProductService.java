@@ -26,22 +26,22 @@ import java.util.stream.Collectors;
 @Transactional // Đảm bảo tính toàn vẹn dữ liệu
 public class ProductService {
 
-//    @Autowired // Inject bean
+    //    @Autowired // Inject bean
     private final ProductRepository productRepository;
 
-//    @Autowired
+    //    @Autowired
     private final CategoryRepository categoryRepository;
 
-//    @Autowired
+    //    @Autowired
     private final BrandRepository brandRepository;
 
-//    @Autowired
+    //    @Autowired
     private final SizeRepository sizeRepository;
 
-//    @Autowired
+    //    @Autowired
     private final ColorRepository colorRepository;
 
-//    @Autowired
+    //    @Autowired
     private final FileStorageService fileStorageService;
 
     private final ProductMapper productMapper;
@@ -51,24 +51,26 @@ public class ProductService {
     public Product create(CreateProductDTO data, List<MultipartFile> files) throws IOException {
 
         Product product = new Product();
-        product.setName(data.getName());
+
+        // check product name
+        Product checkProductName = productRepository.findByNameContains(data.getName());
+
+        if (checkProductName != null) {
+            throw new RuntimeException("Product name is exist");
+        } else {
+            product.setName(data.getName());
+        }
+
         product.setDescription(data.getDescription());
         product.setPrice(data.getPrice());
-        product.setQuantity(data.getQuantity());
         product.setStatus(data.getStatus());
 
-         Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow(() -> new RuntimeException("Category not found with id " + data.getCategoryId()));
+        Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow(() -> new RuntimeException("Category not found with id " + data.getCategoryId()));
 
-         Brand brand = brandRepository.findById(data.getBrandId()).orElseThrow(() -> new RuntimeException("Brand not found"));
+        Brand brand = brandRepository.findById(data.getBrandId()).orElseThrow(() -> new RuntimeException("Brand not found"));
 
-         product.setCategory(category);
-         product.setBrand(brand);
-
-         Color color = colorRepository.findById(data.getColorId()).orElseThrow(() -> new RuntimeException("Color not found"));
-         Size size = sizeRepository.findById(data.getSizeId()).orElseThrow(() -> new RuntimeException("Size not found"));
-
-         product.setColor(color);
-         product.setSize(size);
+        product.setCategory(category);
+        product.setBrand(brand);
 
         List<ProductImage> productImages = new ArrayList<>();
         for (MultipartFile file : files) {
@@ -79,10 +81,11 @@ public class ProductService {
             productImage.setProduct(product);
             productImages.add(productImage);
         }
+
         product.setProductImages(productImages);
         productRepository.save(product);
 
-         return product;
+        return product;
     }
 
     public Page<ProductDTO> filter(FilterProductDTO filterProductDTO, Pageable pageable) {
@@ -90,8 +93,8 @@ public class ProductService {
                 filterProductDTO.getStatus(),
                 filterProductDTO.getCategoryId(),
                 filterProductDTO.getBrandId(),
-                filterProductDTO.getSizeId(),
-                filterProductDTO.getColorId(),
+//                filterProductDTO.getSizeId(),
+//                filterProductDTO.getColorId(),
                 filterProductDTO.getMinPrice(),
                 filterProductDTO.getMaxPrice(),
                 pageable);
@@ -103,8 +106,9 @@ public class ProductService {
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
             return productMapper.toDto(product.get());
+        } else {
+            throw new RuntimeException("Product not found");
         }
-        return null;
     }
 
     public Product update(UpdateProductDTO data, List<MultipartFile> files) throws IOException {
@@ -113,7 +117,6 @@ public class ProductService {
         product.setName(data.getName());
         product.setDescription(data.getDescription());
         product.setPrice(data.getPrice());
-        product.setQuantity(data.getQuantity());
         product.setStatus(data.getStatus());
 
         Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow(() -> new RuntimeException("Category not found with id " + data.getCategoryId()));
@@ -122,12 +125,6 @@ public class ProductService {
 
         product.setCategory(category);
         product.setBrand(brand);
-
-        Color color = colorRepository.findById(data.getColorId()).orElseThrow(() -> new RuntimeException("Color not found"));
-        Size size = sizeRepository.findById(data.getSizeId()).orElseThrow(() -> new RuntimeException("Size not found"));
-
-        product.setColor(color);
-        product.setSize(size);
 
         List<ProductImage> productImages = product.getProductImages();
 
