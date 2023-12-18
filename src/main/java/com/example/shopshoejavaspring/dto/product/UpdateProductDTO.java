@@ -18,8 +18,6 @@ public class UpdateProductDTO {
 
     private Double price;
 
-    private Integer quantity;
-
     private String description;
 
     private Long status;
@@ -27,10 +25,6 @@ public class UpdateProductDTO {
     private Long brandId;
 
     private Long categoryId;
-
-    private Long sizeId;
-
-    private Long colorId;
 
     private List<Long> productDeleteImageIds;
 }

@@ -19,8 +19,6 @@ public class CreateProductDTO {
 
     private Double price;
 
-    private Integer quantity;
-
     private String description;
 
     private Long status;
@@ -29,7 +27,4 @@ public class CreateProductDTO {
 
     private Long categoryId;
 
-    private Long sizeId;
-
-    private Long colorId;
 }
