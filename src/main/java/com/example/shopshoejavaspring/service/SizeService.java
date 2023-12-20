@@ -51,4 +51,9 @@ public class SizeService {
         size.setName(sizeDTO.getName());
         return sizeMapper.toDto(sizeRepository.save(size));
     }
+
+    public List<SizeDTO> getAllSize() {
+        List<Size> sizeList = sizeRepository.findAll();
+        return sizeMapper.toDto(sizeList);
+    }
 }

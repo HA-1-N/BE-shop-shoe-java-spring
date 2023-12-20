@@ -160,4 +160,9 @@ public class ProductService {
     public void delete(Long id) {
         productRepository.deleteById(id);
     }
+
+    public List<ProductDTO> findAll() {
+        List<Product> products = productRepository.findAll();
+        return productMapper.toProductDTOs(products);
+    }
 }
