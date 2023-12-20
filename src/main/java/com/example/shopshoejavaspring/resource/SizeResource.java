@@ -60,4 +60,12 @@ public class SizeResource {
         log.debug("Size : {}", sizeDTO1);
         return ResponseEntity.status(HttpStatus.OK).body(sizeDTO1);
     }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<SizeDTO>> getAllSize() {
+        log.debug("REST request to get all Size");
+        List<SizeDTO> listSize = sizeService.getAllSize();
+        log.debug("Size : {}", listSize);
+        return ResponseEntity.status(HttpStatus.OK).body(listSize);
+    }
 }

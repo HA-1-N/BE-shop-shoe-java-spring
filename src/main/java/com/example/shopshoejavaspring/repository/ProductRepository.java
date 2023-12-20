@@ -17,9 +17,9 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query(value = "select p.* from product p" +
-            " inner join product_quantity pq on pq.product_id = p.id" +
-            " inner join size s on s.id = pq.size_id" +
-            " inner join color c on c.id = pq.color_id " +
+            " left join product_quantity pq on pq.product_id = p.id" +
+            " left join size s on s.id = pq.size_id" +
+            " left join color c on c.id = pq.color_id " +
             "where (:name is null or p.name like concat('%', :name, '%')) " +
             "and (:status is null or p.status = :status) " +
             "and (:categoryId is null or p.category_id = :categoryId) " +

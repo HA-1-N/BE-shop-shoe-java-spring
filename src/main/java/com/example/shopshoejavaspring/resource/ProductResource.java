@@ -58,6 +58,14 @@ public class ProductResource {
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
 
+    @GetMapping("/get-all")
+    public ResponseEntity<List<ProductDTO>> getAllProduct() throws IOException {
+        log.debug("BEGIN - /api/product/get-all");
+        List<ProductDTO> listProductDTO = productService.findAll();
+        log.debug("END - /api/product/get-all");
+        return ResponseEntity.status(HttpStatus.OK).body(listProductDTO);
+    }
+
     @PostMapping("/update")
     public ResponseEntity<UpdateProductDTO> updateProduct(@RequestParam(value = "files", required = false) List<MultipartFile> files, @Valid @RequestPart("data") UpdateProductDTO data) throws IOException {
         log.debug("BEGIN - /api/product/update");
