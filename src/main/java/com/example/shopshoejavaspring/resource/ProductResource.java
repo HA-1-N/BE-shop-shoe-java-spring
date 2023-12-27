@@ -1,9 +1,6 @@
 package com.example.shopshoejavaspring.resource;
 
-import com.example.shopshoejavaspring.dto.product.CreateProductDTO;
-import com.example.shopshoejavaspring.dto.product.FilterProductDTO;
-import com.example.shopshoejavaspring.dto.product.ProductDTO;
-import com.example.shopshoejavaspring.dto.product.UpdateProductDTO;
+import com.example.shopshoejavaspring.dto.product.*;
 import com.example.shopshoejavaspring.entity.Product;
 import com.example.shopshoejavaspring.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +60,14 @@ public class ProductResource {
         log.debug("BEGIN - /api/product/get-all");
         List<ProductDTO> listProductDTO = productService.findAll();
         log.debug("END - /api/product/get-all");
+        return ResponseEntity.status(HttpStatus.OK).body(listProductDTO);
+    }
+
+    @GetMapping("/get-id-name")
+    public ResponseEntity<List<GetIdNameProductDTO>> getIdNameProduct() throws IOException {
+        log.debug("BEGIN - /api/product/get-id-name");
+        List<GetIdNameProductDTO> listProductDTO = productService.findIdName();
+        log.debug("END - /api/product/get-id-name");
         return ResponseEntity.status(HttpStatus.OK).body(listProductDTO);
     }
 

@@ -1,9 +1,6 @@
 package com.example.shopshoejavaspring.service;
 
-import com.example.shopshoejavaspring.dto.product.CreateProductDTO;
-import com.example.shopshoejavaspring.dto.product.FilterProductDTO;
-import com.example.shopshoejavaspring.dto.product.ProductDTO;
-import com.example.shopshoejavaspring.dto.product.UpdateProductDTO;
+import com.example.shopshoejavaspring.dto.product.*;
 import com.example.shopshoejavaspring.entity.*;
 import com.example.shopshoejavaspring.mapper.ProductMapper;
 import com.example.shopshoejavaspring.repository.*;
@@ -164,5 +161,10 @@ public class ProductService {
     public List<ProductDTO> findAll() {
         List<Product> products = productRepository.findAll();
         return productMapper.toProductDTOs(products);
+    }
+
+    public List<GetIdNameProductDTO> findIdName() {
+        List<Product> products = productRepository.findAll();
+        return productMapper.toGetIdNameProductDTOs(products);
     }
 }
