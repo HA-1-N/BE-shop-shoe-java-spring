@@ -91,9 +91,23 @@ public class AuthenticationService {
     public User register(UserDTO userDTO, MultipartFile file) throws IOException {
         User user = new User();
         user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
+
+        Optional<User> checkEmailUser = userRepository.findByEmail(userDTO.getEmail());
+        if (checkEmailUser != null) {
+            throw new RuntimeException("Email is exist");
+        } else {
+            user.setEmail(userDTO.getEmail());
+        }
+
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setPhone(userDTO.getPhone());
+
+        Optional<User> checkPhoneUser = userRepository.findUserByPhoneContains(userDTO.getPhone());
+        if (checkPhoneUser != null) {
+            throw new RuntimeException("Phone is exist");
+        } else {
+            user.setPhone(userDTO.getPhone());
+        }
+
         user.setGender(userDTO.getGender());
         user.setAge(userDTO.getAge());
         user.setDateOfBirth(userDTO.getDateOfBirth());

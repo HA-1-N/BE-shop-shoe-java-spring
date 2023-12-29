@@ -7,6 +7,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class FilterUserDTO {
@@ -22,5 +23,7 @@ public class FilterUserDTO {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateOfBirth;
+
+//    private List<Long> roleIds;
 
 }
