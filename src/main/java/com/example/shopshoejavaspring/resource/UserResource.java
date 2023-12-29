@@ -45,7 +45,7 @@ public class UserResource {
         headers.add("X-Page-Number", String.valueOf(listUser.getNumber()));
         headers.add("X-Page-Size", String.valueOf(listUser.getSize()));
         log.debug("END - /api/user/filter");
-        return ResponseEntity.status(HttpStatus.OK).body(listUser.getContent());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listUser.getContent());
     }
 
     @GetMapping("/get-all")
