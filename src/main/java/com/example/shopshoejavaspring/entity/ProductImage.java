@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Table(name = "product_image")
 public class ProductImage {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

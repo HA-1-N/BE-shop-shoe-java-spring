@@ -86,4 +86,5 @@ public class ProductResource {
         log.debug("END - /api/product/delete/" + id);
         return ResponseEntity.ok().body("Delete success");
     }
+
 }
