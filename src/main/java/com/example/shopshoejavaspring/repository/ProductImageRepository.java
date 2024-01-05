@@ -1,5 +1,6 @@
 package com.example.shopshoejavaspring.repository;
 
+import com.example.shopshoejavaspring.dto.productImage.ProductImageDTO;
 import com.example.shopshoejavaspring.entity.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

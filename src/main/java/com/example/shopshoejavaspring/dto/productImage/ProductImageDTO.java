@@ -6,7 +6,8 @@ import lombok.Data;
 public class ProductImageDTO {
     private Long id;
 
-    private String image;
+    private String name;
+//    private String image;
 
 //    private Long productId;
 }
