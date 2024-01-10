@@ -40,7 +40,7 @@ public class CategoryService {
     }
 
     public Page<CategoryDTO> filterCategory(CategoryDTO categoryDTO, Pageable pageable) {
-        Page<Category> listCategory = categoryRepository.findByNameContainingAndDescriptionContaining(categoryDTO.getName(), categoryDTO.getDescription(), pageable);
+        Page<Category> listCategory = categoryRepository.findByNameContaining(categoryDTO.getName(), pageable);
         List<CategoryDTO> categoryDTOList = categoryMapper.toCategoryDTOs(listCategory.getContent());
         return new PageImpl<>(categoryDTOList, pageable, listCategory.getTotalElements());
     }
@@ -48,6 +48,11 @@ public class CategoryService {
     public CategoryDTO deleteCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
         categoryRepository.delete(category);
+        return categoryMapper.toDto(category);
+    }
+
+    public CategoryDTO findById(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found"));
         return categoryMapper.toDto(category);
     }
 }
