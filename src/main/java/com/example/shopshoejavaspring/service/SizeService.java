@@ -48,6 +48,11 @@ public class SizeService {
 
     public SizeDTO updateSize(Long id, SizeDTO sizeDTO) {
         Size size = sizeRepository.findById(id).orElseThrow(() -> new RuntimeException("Size not found"));
+        // check size exist
+        Size sizeExist = sizeRepository.findByNameContains(sizeDTO.getName());
+        if (sizeExist != null && !sizeExist.getId().equals(id)) {
+            throw new RuntimeException("Size is exist");
+        }
         size.setName(sizeDTO.getName());
         return sizeMapper.toDto(sizeRepository.save(size));
     }

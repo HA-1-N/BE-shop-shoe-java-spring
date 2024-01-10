@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface BrandMapper extends EntityMapper<BrandDTO, Brand> {
     List<BrandDTO> toBrandDTOs(List<Brand> content);
+
+    BrandDTO toDto(Brand brand);
 }
