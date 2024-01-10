@@ -37,6 +37,7 @@ public class ColorService {
 
     public ColorDTO updateColor(ColorDTO colorDTO) {
         Color color = colorRepository.findById(colorDTO.getId()).orElseThrow(() -> new RuntimeException("Color not found"));
+        color.setId(colorDTO.getId());
         color.setName(colorDTO.getName());
         color.setCode(colorDTO.getCode());
         return colorMapper.toDto(colorRepository.save(color));
@@ -50,5 +51,10 @@ public class ColorService {
     public List<ColorDTO> getAllColor() {
         List<Color> colors = colorRepository.findAll();
         return colorMapper.toColorDTOs(colors);
+    }
+
+    public ColorDTO getColorById(Long id) {
+        Color color = colorRepository.findById(id).orElseThrow(() -> new RuntimeException("Color not found"));
+        return colorMapper.toDto(color);
     }
 }
