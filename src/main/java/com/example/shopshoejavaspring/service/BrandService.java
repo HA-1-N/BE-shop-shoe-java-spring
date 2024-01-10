@@ -29,7 +29,7 @@ public class BrandService {
     }
 
     public Page<BrandDTO> filterBrand(BrandDTO brandDTO, Pageable pageable) {
-        Page<Brand> brand = brandRepository.findByNameContains(brandDTO.getName(), pageable);
+        Page<Brand> brand = brandRepository.filterBrand(brandDTO.getName(), pageable);
         List<BrandDTO> brandDTOList = brandMapper.toBrandDTOs(brand.getContent());
         return new PageImpl<>(brandDTOList, pageable, brand.getTotalElements());
     }
@@ -38,5 +38,29 @@ public class BrandService {
         List<Brand> brand = brandRepository.findAll();
         List<BrandDTO> brandDTOList = brandMapper.toBrandDTOs(brand);
         return brandDTOList;
+    }
+
+    public BrandDTO findById(Long id) {
+        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found"));
+        return brandMapper.toDto(brand);
+    }
+
+    public BrandDTO updateBrand(Long id, BrandDTO brandDTO) {
+        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found"));
+
+        // check brand exist
+        Brand brandExist = brandRepository.findByNameContains(brandDTO.getName());
+        if (brandExist != null && !brandExist.getId().equals(id)) {
+            throw new RuntimeException("Brand is exist");
+        }
+
+        brand.setName(brandDTO.getName());
+        brand.setDescription(brandDTO.getDescription());
+        return brandMapper.toDto(brandRepository.save(brand));
+    }
+
+    public void deleteBrand(Long id) {
+        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found"));
+        brandRepository.delete(brand);
     }
 }
