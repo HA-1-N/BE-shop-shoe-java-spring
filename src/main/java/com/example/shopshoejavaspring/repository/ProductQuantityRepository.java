@@ -1,7 +1,10 @@
 package com.example.shopshoejavaspring.repository;
 
 import com.example.shopshoejavaspring.dto.productQuantity.FilterProductQuantityDTO;
+import com.example.shopshoejavaspring.entity.Color;
+import com.example.shopshoejavaspring.entity.Product;
 import com.example.shopshoejavaspring.entity.ProductQuantity;
+import com.example.shopshoejavaspring.entity.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductQuantityRepository extends JpaRepository<ProductQuantity, Long> {
 
@@ -27,4 +31,8 @@ public interface ProductQuantityRepository extends JpaRepository<ProductQuantity
             @Param("status") Long status,
             Pageable pageable
     );
+
+
+    @Query(value = "select * from product_quantity pq where pq.product_id = (:productId) and pq.color_id = (:colorId) and pq.size_id = (:sizeId)", nativeQuery = true)
+    Optional<ProductQuantity> findBySizeIdAndColorIdAndProductId(@Param("sizeId") Long sizeId, @Param("colorId") Long colorId,@Param("productId") Long productId);
 }

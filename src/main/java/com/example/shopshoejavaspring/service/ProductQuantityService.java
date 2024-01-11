@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,9 +47,17 @@ public class ProductQuantityService {
 
         productQuantity.setQuantity(createProductQuantityDTO.getQuantity());
         productQuantity.setStatus(createProductQuantityDTO.getStatus());
+
         Size size = sizeRepository.findById(createProductQuantityDTO.getSizeId()).orElseThrow(() -> new RuntimeException("Size not found"));
-        productQuantity.setSize(size);
         Color color = colorRepository.findById(createProductQuantityDTO.getColorId()).orElseThrow(() -> new RuntimeException("Color not found"));
+
+        // check size and color exist in product quantity
+        Optional<ProductQuantity> productQuantityOptionalSizeAndColor = productQuantityRepository.findBySizeIdAndColorIdAndProductId(createProductQuantityDTO.getSizeId(), createProductQuantityDTO.getColorId(), createProductQuantityDTO.getProductId());
+        if (productQuantityOptionalSizeAndColor.isPresent()) {
+            throw new RuntimeException("Size and color exist in product quantity");
+        }
+
+        productQuantity.setSize(size);
         productQuantity.setColor(color);
         Product product = productRepository.findById(createProductQuantityDTO.getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
         productQuantity.setProduct(product);
@@ -100,5 +109,10 @@ public class ProductQuantityService {
         ProductQuantity productQuantity = productQuantityRepository.findById(id).orElseThrow(() -> new RuntimeException("Product quantity not found"));
         ProductQuantityDetailDTO productQuantityDetailDTO = productQuantityMapper.toDto(productQuantity);
         return productQuantityDetailDTO;
+    }
+
+    public void delete(Long id) {
+        ProductQuantity productQuantity = productQuantityRepository.findById(id).orElseThrow(() -> new RuntimeException("Product quantity not found"));
+        productQuantityRepository.delete(productQuantity);
     }
 }

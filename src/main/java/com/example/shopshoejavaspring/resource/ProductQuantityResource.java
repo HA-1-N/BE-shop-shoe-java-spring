@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,12 @@ public class ProductQuantityResource {
     public ResponseEntity<List<ProductQuantityDetailDTO>> filterProductQuantity(@RequestBody FilterProductQuantityDTO productQuantityDTO, Pageable pageable) {
         log.debug("REST request to filter ProductQuantity");
         Page<ProductQuantityDetailDTO> productQuantities = productQuantityService.filter(productQuantityDTO, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(productQuantities.getContent());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(productQuantities.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(productQuantities.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(productQuantities.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(productQuantities.getSize()));
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(productQuantities.getContent());
     }
 
     @GetMapping("/get-by-id/{id}")
@@ -54,6 +60,13 @@ public class ProductQuantityResource {
         log.debug("REST request to get all ProductQuantity");
         List<ProductQuantityDetailDTO> productQuantityDTO = productQuantityService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(productQuantityDTO);
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteProductQuantity(@PathVariable Long id) {
+        log.debug("REST request to delete ProductQuantity : {}", id);
+        productQuantityService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 }
