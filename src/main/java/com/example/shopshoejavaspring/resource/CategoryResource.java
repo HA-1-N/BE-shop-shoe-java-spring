@@ -65,4 +65,11 @@ public class CategoryResource {
         CategoryDTO categoryDTO = categoryService.deleteCategory(id);
         return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
     }
+
+    @GetMapping("/find-by-id/{id}")
+    public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {
+        log.debug("REST request to get Category : {}", id);
+        CategoryDTO categoryDTO = categoryService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(categoryDTO);
+    }
 }

@@ -111,7 +111,14 @@ public class ProductService {
     public Product update(UpdateProductDTO data, List<MultipartFile> files) throws IOException {
         Product product = productRepository.findById(data.getId()).orElseThrow(() -> new RuntimeException("Product not found"));
         product.setId(data.getId());
-        product.setName(data.getName());
+
+        // check product name
+        Product checkProductName = productRepository.findByNameContains(data.getName());
+        if (checkProductName != null && !checkProductName.getId().equals(data.getId())) {
+            throw new RuntimeException("Product name is exist");
+        } else {
+            product.setName(data.getName());
+        }
         product.setDescription(data.getDescription());
         product.setPrice(data.getPrice());
         product.setStatus(data.getStatus());

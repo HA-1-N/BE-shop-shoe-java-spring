@@ -57,4 +57,11 @@ public class ColorResource {
         List<ColorDTO> listColor = colorService.getAllColor();
         return ResponseEntity.status(HttpStatus.OK).body(listColor);
     }
+
+    @GetMapping("/find-by-id/{id}")
+    public ResponseEntity<ColorDTO> getColorById(@PathVariable Long id) {
+        log.debug("REST request to get Color : {}", id);
+        ColorDTO color = colorService.getColorById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(color);
+    }
 }
