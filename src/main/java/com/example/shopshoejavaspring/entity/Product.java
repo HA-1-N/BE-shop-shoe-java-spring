@@ -3,11 +3,15 @@ package com.example.shopshoejavaspring.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -55,6 +59,15 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
     @JsonIgnore
     private List<ProductQuantity> productQuantities = new ArrayList<>();
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "product_hot_category",
+            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
+            inverseJoinColumns = @JoinColumn(name = "hot_category_id", referencedColumnName = "id"))
+    @BatchSize(size = 20)
+    @ToString.Exclude
+    private Set<HotCategory> hotCategories = new HashSet<>();
 
 //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
 //    @JsonIgnore

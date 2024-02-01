@@ -42,4 +42,11 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             Pageable pageable);
 
     Product findByNameContains(String name);
+
+    @Query(value = "select * from product p " +
+            "left join product_hot_category phc on phc.product_id = p.id " +
+            "left join hot_category hc on hc.id = phc.hot_category_id " +
+            "where hc.id = :id ",
+            nativeQuery = true)
+    List<Product> findByHotCategory(@Param("id") Long id, Pageable pageable);
 }

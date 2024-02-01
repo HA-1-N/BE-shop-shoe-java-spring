@@ -36,6 +36,10 @@ public class SecurityConfig {
                 .permitAll() // all request start with /api/auth is permit all
                 .antMatchers("/api/banners/get-all")
                 .permitAll()
+                .antMatchers("/api/product/filter")
+                .permitAll()
+                .antMatchers("/api/hot-category/**")
+                .permitAll()
                 .anyRequest()
                 .authenticated() // all request must be authenticated
                 .and()
