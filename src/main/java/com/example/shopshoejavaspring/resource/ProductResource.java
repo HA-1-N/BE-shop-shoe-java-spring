@@ -87,4 +87,16 @@ public class ProductResource {
         return ResponseEntity.ok().body("Delete success");
     }
 
+    @GetMapping("/get-product-by-hot-category/{id}")
+    public ResponseEntity<List<ProductDTO>> getProductByHotCategory(@PathVariable Long id, Pageable pageable) throws IOException {
+        log.debug("BEGIN - /api/product/get-product-by-category/" + id);
+        List<ProductDTO> listProductDTO = productService.findByHotCategory(id, pageable);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listProductDTO.size()));
+        headers.add("X-Total-Pages", String.valueOf(1));
+        headers.add("X-Page-Number", String.valueOf(0));
+        headers.add("X-Page-Size", String.valueOf(listProductDTO.size()));
+        log.debug("END - /api/product/get-product-by-category/" + id);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listProductDTO);
+    }
 }

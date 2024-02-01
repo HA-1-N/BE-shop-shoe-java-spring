@@ -174,4 +174,9 @@ public class ProductService {
         List<Product> products = productRepository.findAll();
         return productMapper.toGetIdNameProductDTOs(products);
     }
+
+    public List<ProductDTO> findByHotCategory(Long id, Pageable pageable) {
+        List<Product> products = productRepository.findByHotCategory(id, pageable);
+        return productMapper.toProductDTOs(products);
+    }
 }
