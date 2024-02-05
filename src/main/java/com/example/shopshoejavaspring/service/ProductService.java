@@ -144,14 +144,16 @@ public class ProductService {
             }
         }
 
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                String imageUrl = fileStorageService.uploadImage(file);
+        if(files != null && files.size() > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String imageUrl = fileStorageService.uploadImage(file);
 
-                ProductImage productImage = new ProductImage();
-                productImage.setImage(imageUrl);
-                productImage.setProduct(product);
-                productImages.add(productImage);
+                    ProductImage productImage = new ProductImage();
+                    productImage.setImage(imageUrl);
+                    productImage.setProduct(product);
+                    productImages.add(productImage);
+                }
             }
         }
 

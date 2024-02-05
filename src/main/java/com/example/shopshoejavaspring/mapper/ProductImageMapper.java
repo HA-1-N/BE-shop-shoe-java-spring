@@ -11,7 +11,7 @@ public interface ProductImageMapper extends EntityMapper<ProductImageDTO, Produc
 
     ProductImageMapper INSTANCE = Mappers.getMapper(ProductImageMapper.class);
 
-    @Mapping(source = "image", target = "name")
+    @Mapping(source = "image", target = "url")
     ProductImageDTO toDto(ProductImage productImage);
 
 }
