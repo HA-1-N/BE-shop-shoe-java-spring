@@ -1,6 +1,7 @@
 package com.example.shopshoejavaspring.utils;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.api.ApiResponse;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +42,19 @@ public class FileStorageService {
     public String uploadImage(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
         return uploadResult.get("url").toString();
+    }
+
+    // delete file
+    public void deleteFile(List <String> publicIds) {
+        try {
+            ApiResponse apiResponse = cloudinary.api().deleteResources(publicIds,
+                    ObjectUtils.asMap("type", "upload", "resource_type", "image"));
+            System.out.println(apiResponse);
+        } catch (IOException exception) {
+            System.out.println(exception.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<String> uploadImages(List<MultipartFile> files) throws IOException {
