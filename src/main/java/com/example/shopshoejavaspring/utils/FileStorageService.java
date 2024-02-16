@@ -72,4 +72,12 @@ public class FileStorageService {
     public void deleteImage(String image) {
 
     }
+
+    public void deleteImages(List<Long> productQuantityImageIds) {
+        List<String> publicIds = new ArrayList<>();
+        for (Long productQuantityImageId : productQuantityImageIds) {
+            publicIds.add(productQuantityImageId.toString());
+        }
+        deleteFile(publicIds);
+    }
 }

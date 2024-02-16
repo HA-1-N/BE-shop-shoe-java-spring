@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,12 @@ public class ColorResource {
     public ResponseEntity<List<ColorDTO>> filterColor(@RequestBody ColorDTO colorDTO, Pageable pageable) {
         log.debug("REST request to save Color : {}", colorDTO);
         Page<ColorDTO> listColor = colorService.filterColor(colorDTO, pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(listColor.getContent());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listColor.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(listColor.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(listColor.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(listColor.getSize()));
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listColor.getContent());
     }
 
     @PostMapping("/update")
