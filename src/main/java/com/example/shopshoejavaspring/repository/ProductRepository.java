@@ -49,4 +49,29 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "where hc.id = :id ",
             nativeQuery = true)
     List<Product> findByHotCategory(@Param("id") Long id, Pageable pageable);
+
+    @Query(value = "select p.* from product p" +
+            " left join product_quantity pq on pq.product_id = p.id" +
+            " left join size s on s.id = pq.size_id" +
+            " left join color c on c.id = pq.color_id " +
+            "where (:name is null or p.name like concat('%', :name, '%')) " +
+            "and (:status is null or p.status = :status) " +
+            "and ( coalesce(null, :categoryId) is null or p.category_id in (:categoryId) ) " +
+            "and ( coalesce(null, :brandId) is null or p.brand_id in (:brandId) ) " +
+            "and ( coalesce(null, :sizeId) is null or pq.size_id in (:sizeId) ) " +
+            "and ( coalesce(null, :colorId) is null or pq.color_id in (:colorId) ) " +
+            "and (:minPrice is null or p.price >= :minPrice) " +
+            "and (:maxPrice is null or p.price <= :maxPrice) " +
+            "group by p.id " +
+            "order by p.name asc ",
+            nativeQuery = true)
+    Page<Product> filterWebsite(@Param("name") String name,
+                                @Param("status") Long status,
+                                @Param("categoryId") List<Long> categoryId,
+                                @Param("brandId") List<Long> brandId,
+                                @Param("sizeId") List<Long> sizeId,
+                                @Param("colorId") List<Long> colorId,
+                                @Param("minPrice") Double minPrice,
+                                @Param("maxPrice") Double maxPrice,
+                                Pageable pageable);
 }

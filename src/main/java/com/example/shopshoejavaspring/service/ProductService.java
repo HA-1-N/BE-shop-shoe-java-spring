@@ -181,4 +181,18 @@ public class ProductService {
         List<Product> products = productRepository.findByHotCategory(id, pageable);
         return productMapper.toProductDTOs(products);
     }
+
+    public Page<ProductDTO> filterWebsite(FilterProductWebsiteDTO filterProductWebsiteDTO, Pageable pageable) {
+        Page<Product> products = productRepository.filterWebsite(filterProductWebsiteDTO.getName(),
+                filterProductWebsiteDTO.getStatus(),
+                filterProductWebsiteDTO.getCategoryId(),
+                filterProductWebsiteDTO.getBrandId(),
+                filterProductWebsiteDTO.getSizeId(),
+                filterProductWebsiteDTO.getColorId(),
+                filterProductWebsiteDTO.getMinPrice(),
+                filterProductWebsiteDTO.getMaxPrice(),
+                pageable);
+        List<ProductDTO> productDTO = productMapper.toProductDTOs(products.getContent());
+        return new PageImpl<>(productDTO, pageable, products.getTotalElements());
+    }
 }

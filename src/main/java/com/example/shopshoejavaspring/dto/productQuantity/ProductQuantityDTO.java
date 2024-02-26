@@ -4,6 +4,8 @@ import com.example.shopshoejavaspring.dto.color.ColorDTO;
 import com.example.shopshoejavaspring.dto.size.SizeDTO;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ProductQuantityDTO {
 
@@ -16,5 +18,7 @@ public class ProductQuantityDTO {
     private SizeDTO size;
 
     private ColorDTO color;
+
+    private List<ProductQuantityImageDTO> productQuantityImages;
 
 }
