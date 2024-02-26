@@ -47,6 +47,19 @@ public class ProductResource {
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listProduct.getContent());
     }
 
+    @PostMapping("/filter-website")
+    public ResponseEntity<List<ProductDTO>> filterProductWebsite(@RequestBody FilterProductWebsiteDTO filterProductWebsiteDTO, Pageable pageable) throws IOException {
+        log.debug("BEGIN - /api/product/filter-website");
+        Page<ProductDTO> listProduct = productService.filterWebsite(filterProductWebsiteDTO, pageable);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listProduct.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(listProduct.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(listProduct.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(listProduct.getSize()));
+        log.debug("END - /api/product/filter-website");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listProduct.getContent());
+    }
+
     @GetMapping("/get-by-id/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) throws IOException {
         log.debug("BEGIN - /api/product/get-by-id/" + id);

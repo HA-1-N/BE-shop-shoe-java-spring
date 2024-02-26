@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {ProductImageMapper.class, ProductQuantityMapper.class})
+@Mapper(componentModel = "spring", uses = {ProductImageMapper.class, ProductQuantityMapper.class, ProductQuantityImageMapper.class})
 public interface ProductMapper extends EntityMapper<ProductDTO, Product> {
 
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);

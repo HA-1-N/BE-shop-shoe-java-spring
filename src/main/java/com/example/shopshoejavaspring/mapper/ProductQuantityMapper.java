@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ProductMapper.class, ProductImageMapper.class, ProductQuantityMapper.class, ProductQuantityImageMapper.class, SizeMapper.class, ColorMapper.class, ProductMapper.class, ProductImageMapper.class, ProductQuantityMapper.class, ProductQuantityImageMapper.class})
 public interface ProductQuantityMapper extends EntityMapper<ProductQuantityDetailDTO, ProductQuantity> {
     List<ProductQuantityDetailDTO> toProductQuantityDTOs(List<ProductQuantity> content);
 

@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Page<Category> findByNameContaining(String name, Pageable pageable);
+
+    boolean existsByName(String name);
 }

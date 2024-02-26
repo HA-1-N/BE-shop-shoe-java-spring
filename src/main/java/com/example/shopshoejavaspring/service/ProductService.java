@@ -144,14 +144,16 @@ public class ProductService {
             }
         }
 
-        for (MultipartFile file : files) {
-            if (!file.isEmpty()) {
-                String imageUrl = fileStorageService.uploadImage(file);
+        if(files != null && files.size() > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    String imageUrl = fileStorageService.uploadImage(file);
 
-                ProductImage productImage = new ProductImage();
-                productImage.setImage(imageUrl);
-                productImage.setProduct(product);
-                productImages.add(productImage);
+                    ProductImage productImage = new ProductImage();
+                    productImage.setImage(imageUrl);
+                    productImage.setProduct(product);
+                    productImages.add(productImage);
+                }
             }
         }
 
@@ -178,5 +180,19 @@ public class ProductService {
     public List<ProductDTO> findByHotCategory(Long id, Pageable pageable) {
         List<Product> products = productRepository.findByHotCategory(id, pageable);
         return productMapper.toProductDTOs(products);
+    }
+
+    public Page<ProductDTO> filterWebsite(FilterProductWebsiteDTO filterProductWebsiteDTO, Pageable pageable) {
+        Page<Product> products = productRepository.filterWebsite(filterProductWebsiteDTO.getName(),
+                filterProductWebsiteDTO.getStatus(),
+                filterProductWebsiteDTO.getCategoryId(),
+                filterProductWebsiteDTO.getBrandId(),
+                filterProductWebsiteDTO.getSizeId(),
+                filterProductWebsiteDTO.getColorId(),
+                filterProductWebsiteDTO.getMinPrice(),
+                filterProductWebsiteDTO.getMaxPrice(),
+                pageable);
+        List<ProductDTO> productDTO = productMapper.toProductDTOs(products.getContent());
+        return new PageImpl<>(productDTO, pageable, products.getTotalElements());
     }
 }

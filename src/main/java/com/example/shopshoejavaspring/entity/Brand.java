@@ -23,4 +23,7 @@ public class Brand {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "image")
+    private String image;
+
 }

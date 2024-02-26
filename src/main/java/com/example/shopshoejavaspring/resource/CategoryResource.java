@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,9 +33,9 @@ public class CategoryResource {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<CategoryDTO> createCategory(@RequestParam(value = "file", required = false) MultipartFile file, @Valid @RequestPart("data") CategoryDTO categoryDTO) {
         log.debug("REST request to create Category : {}", categoryDTO);
-        Category category = categoryService.createCategory(categoryDTO);
+        Category category = categoryService.createCategory(categoryDTO, file);
         categoryDTO.setId(category.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
     }
@@ -52,9 +53,9 @@ public class CategoryResource {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO, @PathVariable Long id) {
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestParam(value = "file", required = false) MultipartFile file ,@Valid @RequestPart("data") CategoryDTO categoryDTO, @PathVariable Long id) {
         log.debug("REST request to update Category : {}", categoryDTO);
-        CategoryDTO category = categoryService.updateCategory(categoryDTO, id);
+        CategoryDTO category = categoryService.updateCategory(file, categoryDTO, id);
         categoryDTO.setId(category.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryDTO);
     }

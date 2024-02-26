@@ -4,12 +4,14 @@ import com.example.shopshoejavaspring.dto.brand.BrandDTO;
 import com.example.shopshoejavaspring.entity.Brand;
 import com.example.shopshoejavaspring.mapper.BrandMapper;
 import com.example.shopshoejavaspring.repository.BrandRepository;
+import com.example.shopshoejavaspring.utils.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,8 +24,20 @@ public class BrandService {
 
     private final BrandMapper brandMapper;
 
-    public Brand createBrand(BrandDTO brandDTO) {
+    private final FileStorageService fileStorageService;
+
+    public Brand createBrand(BrandDTO brandDTO, MultipartFile file) {
         Brand brand = brandMapper.toEntity(brandDTO);
+//        Brand brand = new Brand();
+//        brand.setName(brandDTO.getName());
+//        brand.setDescription(brandDTO.getDescription());
+        // set file
+        try {
+            String fileName = fileStorageService.uploadImage(file);
+            brand.setImage(fileName);
+        } catch (Exception e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
         brandRepository.save(brand);
         return brand;
     }
@@ -45,7 +59,7 @@ public class BrandService {
         return brandMapper.toDto(brand);
     }
 
-    public BrandDTO updateBrand(Long id, BrandDTO brandDTO) {
+    public BrandDTO updateBrand(Long id, MultipartFile file, BrandDTO brandDTO) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found"));
 
         // check brand exist
@@ -56,6 +70,17 @@ public class BrandService {
 
         brand.setName(brandDTO.getName());
         brand.setDescription(brandDTO.getDescription());
+
+        // set file
+        if (file != null && !file.isEmpty()) {
+            try {
+                String fileName = fileStorageService.uploadImage(file);
+                brand.setImage(fileName);
+            } catch (Exception e) {
+                throw new RuntimeException("Error: " + e.getMessage());
+            }
+        }
+
         return brandMapper.toDto(brandRepository.save(brand));
     }
 

@@ -1,9 +1,6 @@
 package com.example.shopshoejavaspring.resource;
 
-import com.example.shopshoejavaspring.dto.productQuantity.CreateProductQuantityDTO;
-import com.example.shopshoejavaspring.dto.productQuantity.FilterProductQuantityDTO;
-import com.example.shopshoejavaspring.dto.productQuantity.ProductQuantityDTO;
-import com.example.shopshoejavaspring.dto.productQuantity.ProductQuantityDetailDTO;
+import com.example.shopshoejavaspring.dto.productQuantity.*;
 import com.example.shopshoejavaspring.entity.ProductQuantity;
 import com.example.shopshoejavaspring.service.ProductQuantityService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +31,13 @@ public class ProductQuantityResource {
         ProductQuantity productQuantity = productQuantityService.create(createProductQuantityDTO, files);
         createProductQuantityDTO.setId(productQuantity.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createProductQuantityDTO);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<UpdateProductQuantityDTO> updateProductQuantity(@RequestParam(value = "files", required = false) List<MultipartFile> files, @Valid @RequestPart("data") UpdateProductQuantityDTO updateProductQuantityDTO) {
+        log.debug("REST request to update ProductQuantity");
+        ProductQuantity productQuantity = productQuantityService.update(updateProductQuantityDTO, files);
+        return ResponseEntity.status(HttpStatus.OK).body(updateProductQuantityDTO);
     }
 
     @PostMapping("/filter")

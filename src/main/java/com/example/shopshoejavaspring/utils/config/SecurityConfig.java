@@ -34,11 +34,17 @@ public class SecurityConfig {
                 .authorizeHttpRequests() // config authorize request
                 .requestMatchers(request -> request.getServletPath().startsWith("/api/auth"))
                 .permitAll() // all request start with /api/auth is permit all
-                .antMatchers("/api/banners/get-all")
-                .permitAll()
-                .antMatchers("/api/product/filter")
-                .permitAll()
-                .antMatchers("/api/hot-category/**")
+                .antMatchers(
+                        "/api/banners/get-all",
+                        "/api/product/filter",
+                        "/api/product/get-by-id/**",
+                        "/api/product/filter-website",
+                        "/api/hot-category/**",
+                        "/api/brand/get-all",
+                        "/api/category/get-all",
+                        "/api/color/get-all",
+                        "/api/size/get-all"
+                )
                 .permitAll()
                 .anyRequest()
                 .authenticated() // all request must be authenticated

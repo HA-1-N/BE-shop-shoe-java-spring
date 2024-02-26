@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -24,9 +25,9 @@ public class BrandResource {
     private final BrandService brandService;
 
     @PostMapping("/create")
-    public ResponseEntity<BrandDTO> createBrand(@Valid @RequestBody BrandDTO brandDTO) {
+    public ResponseEntity<BrandDTO> createBrand(@RequestParam(value = "file", required = false) MultipartFile file, @Valid @RequestPart("data") BrandDTO brandDTO) {
         log.info("REST request to save Brand : {}", brandDTO);
-        Brand brand = brandService.createBrand(brandDTO);
+        Brand brand = brandService.createBrand(brandDTO, file);
         brandDTO.setId(brand.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(brandDTO);
     }
@@ -58,9 +59,9 @@ public class BrandResource {
     }
 
     @PostMapping("/update/{id}")
-    public ResponseEntity<BrandDTO> updateBrand(@PathVariable Long id, @Valid @RequestBody BrandDTO brandDTO) {
+    public ResponseEntity<BrandDTO> updateBrand(@PathVariable Long id, @RequestPart(value = "file", required = false) MultipartFile file, @Valid @RequestPart("data") BrandDTO brandDTO) {
         log.info("REST request to update Brand : {}", brandDTO);
-        BrandDTO brandDTO1 = brandService.updateBrand(id, brandDTO);
+        BrandDTO brandDTO1 = brandService.updateBrand(id, file, brandDTO);
         return ResponseEntity.status(HttpStatus.OK).body(brandDTO1);
     }
 

@@ -1,5 +1,6 @@
 package com.example.shopshoejavaspring.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
