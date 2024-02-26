@@ -1,12 +1,17 @@
 package com.example.shopshoejavaspring.utils.config;
 
+import com.example.shopshoejavaspring.utils.common.AuthoritiesConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,6 +28,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private final AuthenticationProvider authenticationProvider;
+
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -46,6 +53,10 @@ public class SecurityConfig {
                         "/api/size/get-all"
                 )
                 .permitAll()
+                .antMatchers(
+                        "/api/banners/create/",
+                        "/api/brand/filter/**"
+                ).hasAuthority(AuthoritiesConstants.ADMIN)
                 .anyRequest()
                 .authenticated() // all request must be authenticated
                 .and()
