@@ -11,6 +11,7 @@ import com.example.shopshoejavaspring.repository.UserRepository;
 import com.example.shopshoejavaspring.utils.FileStorageService;
 import com.example.shopshoejavaspring.utils.config.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -93,7 +95,7 @@ public class AuthenticationService {
         user.setName(userDTO.getName());
 
         Optional<User> checkEmailUser = userRepository.findByEmail(userDTO.getEmail());
-        if (checkEmailUser != null) {
+        if (checkEmailUser.isPresent()) {
             throw new RuntimeException("Email is exist");
         } else {
             user.setEmail(userDTO.getEmail());
@@ -102,7 +104,7 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
         Optional<User> checkPhoneUser = userRepository.findUserByPhoneContains(userDTO.getPhone());
-        if (checkPhoneUser != null) {
+        if (checkPhoneUser.isPresent()) {
             throw new RuntimeException("Phone is exist");
         } else {
             user.setPhone(userDTO.getPhone());

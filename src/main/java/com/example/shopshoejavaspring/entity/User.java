@@ -71,6 +71,12 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Cart> carts;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
+
     public Set<Role> getRoles() {
         return roles;
     }
