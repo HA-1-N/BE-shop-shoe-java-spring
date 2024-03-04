@@ -1,6 +1,7 @@
 package com.example.shopshoejavaspring.resource;
 
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
+import com.example.shopshoejavaspring.dto.user.ChangePasswordDTO;
 import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
@@ -49,6 +50,14 @@ public class AuthenticationResource {
         Boolean isExist = authenticationService.verifyEmail(email);
         log.debug("END - /api/auth/verify-email");
         return ResponseEntity.status(HttpStatus.OK).body(isExist);
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
+        log.debug("BEGIN - /api/auth/change-password");
+        authenticationService.changePassword(changePasswordDTO);
+        log.debug("END - /api/auth/change-password");
+        return ResponseEntity.status(HttpStatus.OK).body("Change password success");
     }
 
     @PostMapping("/reset-password")

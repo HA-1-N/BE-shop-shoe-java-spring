@@ -1,6 +1,7 @@
 package com.example.shopshoejavaspring.service;
 
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
+import com.example.shopshoejavaspring.dto.user.ChangePasswordDTO;
 import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
@@ -140,5 +141,14 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(resetPasswordDTO.getPassword()));
         userRepository.save(user);
         return "Reset password success";
+    }
+
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+        User user = userRepository.findById(changePasswordDTO.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        userRepository.save(user);
     }
 }
