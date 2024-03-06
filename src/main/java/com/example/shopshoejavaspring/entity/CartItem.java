@@ -22,8 +22,9 @@ public class CartItem {
     @JoinColumn(name ="cart_id")
     private Cart cart;
 
-    @Column(name ="product_id")
-    private Long product_id;
+    @ManyToOne
+    @JoinColumn(name ="product_id")
+    private Product product;
 
     @Column(name ="quantity")
     private Long quantity;
@@ -32,18 +33,18 @@ public class CartItem {
     private Long price;
 
     @Column(name = "size_id")
-    private Long size_id;
+    private Long sizeId;
 
     @Column(name = "color_id")
-    private Long color_id;
+    private Long colorId;
 
     @Column(name ="created_at")
-    private String created_at;
+    private String createdAt;
 
     @Column(name ="updated_at")
-    private String updated_at;
+    private String updatedAt;
 
     @Column(name ="modified_at")
-    private String modified_at;
+    private String modifiedAt;
 
 }
