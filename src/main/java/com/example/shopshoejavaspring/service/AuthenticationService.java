@@ -1,10 +1,12 @@
 package com.example.shopshoejavaspring.service;
 
+import com.example.shopshoejavaspring.dto.refreshToken.RequestRefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
 import com.example.shopshoejavaspring.dto.user.ChangePasswordDTO;
 import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
+import com.example.shopshoejavaspring.entity.RefreshToken;
 import com.example.shopshoejavaspring.entity.Role;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.repository.RoleRepository;
@@ -43,12 +45,15 @@ public class AuthenticationService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final RefreshTokenService refreshTokenService;
+
     public UserDTO login(UserLoginDTO userLoginDTO) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
         );
         User user = userRepository.findByEmail(userLoginDTO.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
         String jwtToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 //        UserDTO userDTO = UserDTO.builder()
 //                .id(user.getId())
 //                .name(user.getName())
@@ -76,6 +81,7 @@ public class AuthenticationService {
         userDTO.setDateOfBirth(user.getDateOfBirth());
         userDTO.setImage(user.getImage());
         userDTO.setToken(jwtToken);
+        userDTO.setRefreshToken(refreshToken.getToken());
 
         List<RoleDTO> listRoleDTO = new ArrayList<>();
 
@@ -113,6 +119,7 @@ public class AuthenticationService {
 
         user.setGender(userDTO.getGender());
         user.setAge(userDTO.getAge());
+        user.setPrefix(userDTO.getPrefix());
         user.setDateOfBirth(userDTO.getDateOfBirth());
 
         String imageUrl = fileStorageService.uploadImage(file);
@@ -151,4 +158,5 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         userRepository.save(user);
     }
+
 }

@@ -48,6 +48,9 @@ public class User implements UserDetails {
     @Column(name = "age")
     private Integer age;
 
+    @Column(name = "prefix")
+    private String prefix;
+
     @Column(name = "phone")
     private String phone;
 
