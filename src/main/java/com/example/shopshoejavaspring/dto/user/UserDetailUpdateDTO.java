@@ -1,6 +1,5 @@
 package com.example.shopshoejavaspring.dto.user;
 
-import com.example.shopshoejavaspring.dto.role.RoleDTO;
 import com.example.shopshoejavaspring.enumerations.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,16 +8,13 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Data
-@AllArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Builder
-public class ListUserDTO {
+public class UserDetailUpdateDTO {
 
     private Long id;
 
@@ -38,7 +34,5 @@ public class ListUserDTO {
     private Date dateOfBirth;
 
     private String image;
-
-    private List<RoleDTO> roles = new ArrayList<>();
 
 }

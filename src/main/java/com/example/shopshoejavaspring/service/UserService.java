@@ -5,6 +5,7 @@ import com.example.shopshoejavaspring.dto.role.RoleDTO;
 import com.example.shopshoejavaspring.dto.user.FilterUserDTO;
 import com.example.shopshoejavaspring.dto.user.ListUserDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
+import com.example.shopshoejavaspring.dto.user.UserDetailUpdateDTO;
 import com.example.shopshoejavaspring.entity.Role;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.mapper.UserMapper;
@@ -117,6 +118,7 @@ public class UserService {
             user.get().setPhone(userDTO.getPhone());
             user.get().setGender(userDTO.getGender());
             user.get().setAge(userDTO.getAge());
+            user.get().setPrefix(userDTO.getPrefix());
             user.get().setDateOfBirth(userDTO.getDateOfBirth());
 
             if (file != null && !file.isEmpty()) {
@@ -131,6 +133,30 @@ public class UserService {
                         .map(Optional::get) // get role
                         .collect(Collectors.toSet()); // collect to set
                 user.get().setRoles(roles);
+            }
+
+            userRepository.save(user.get());
+            return user.get();
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
+
+    public User updateUserDetail(Long id, UserDetailUpdateDTO userDetailUpdateDTO, MultipartFile file) throws IOException {
+        Optional<User> user = userRepository.findById(id);
+
+        if (user.isPresent()) {
+            user.get().setName(userDetailUpdateDTO.getName());
+            user.get().setEmail(userDetailUpdateDTO.getEmail());
+            user.get().setPhone(userDetailUpdateDTO.getPhone());
+            user.get().setGender(userDetailUpdateDTO.getGender());
+            user.get().setAge(userDetailUpdateDTO.getAge());
+            user.get().setPrefix(userDetailUpdateDTO.getPrefix());
+            user.get().setDateOfBirth(userDetailUpdateDTO.getDateOfBirth());
+
+            if (file != null && !file.isEmpty()) {
+                String imageUrl = fileStorageService.uploadImage(file);
+                user.get().setImage(imageUrl);
             }
 
             userRepository.save(user.get());
