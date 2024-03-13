@@ -6,14 +6,13 @@ import com.example.shopshoejavaspring.dto.cart.RemoveFromCartDTO;
 import com.example.shopshoejavaspring.entity.Cart;
 import com.example.shopshoejavaspring.entity.CartItem;
 import com.example.shopshoejavaspring.entity.Product;
+import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.mapper.CartItemMapper;
-import com.example.shopshoejavaspring.repository.CartItemRepository;
-import com.example.shopshoejavaspring.repository.CartRepository;
-import com.example.shopshoejavaspring.repository.ProductRepository;
-import com.example.shopshoejavaspring.repository.UserRepository;
+import com.example.shopshoejavaspring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,16 +30,24 @@ public class CartService {
 
     private final CartItemMapper cartItemMapper;
 
-    public AddCartItemDTO addToCart(AddCartItemDTO addCartItemDTO) {
-        Cart cart = new Cart();
-        CartItem cartItem = new CartItem();
+    private final ColorRepository colorRepository;
 
-        if (addCartItemDTO.getCartId() == null) {
-            cart.setUser(userRepository.findById(addCartItemDTO.getUserId()).get());
-            cartRepository.save(cart);
-        } else {
-           cartRepository.findById(addCartItemDTO.getCartId()).orElseThrow(() -> new RuntimeException("Cart not found"));
+    private final SizeRepository sizeRepository;
+
+    private final ProductImageRepository productImageRepository;
+
+    public AddCartItemDTO addToCart(AddCartItemDTO addCartItemDTO) {
+
+        User user = userRepository.findById(addCartItemDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Cart cart = user.getCarts().stream().findFirst().orElse(new Cart());
+        if (cart.getUser() == null) {
+            cart.setUser(user);
+            cartRepository.save(cart); // Lưu giỏ hàng mới vào cơ sở dữ liệu
         }
+
+        CartItem cartItem = new CartItem();
 
         Product product = productRepository.findById(addCartItemDTO.getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -59,7 +66,19 @@ public class CartService {
 
     public List<CartItemDTO> getCartByUserId(Long userId) {
         List<CartItem> cartItems = cartItemRepository.findByCartUserId(userId);
-        List<CartItemDTO> cartItemDTOS = cartItemMapper.toDtos(cartItems);
+        List<CartItemDTO> cartItemDTOS = new ArrayList<>();
+
+        for (CartItem cartItem : cartItems) {
+            CartItemDTO cartItemDTO = new CartItemDTO();
+            cartItemDTO.setId(cartItem.getId());
+            cartItemDTO.setCartId(cartItem.getCart().getId());
+            cartItemDTO.setProduct(cartItem.getProduct());
+            cartItemDTO.setQuantity(cartItem.getQuantity());
+            cartItemDTO.setColor(colorRepository.findById(cartItem.getColorId()).orElse(null));
+            cartItemDTO.setSize(sizeRepository.findById(cartItem.getSizeId()).orElse(null));
+            cartItemDTO.setProductImage(cartItem.getProduct().getProductImages().stream().findFirst().orElse(null));
+            cartItemDTOS.add(cartItemDTO);
+        }
         return cartItemDTOS;
     }
 }
