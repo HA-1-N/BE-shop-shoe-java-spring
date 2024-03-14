@@ -42,4 +42,11 @@ public class CartResource {
         return ResponseEntity.ok().body(cartItemDTO);
     }
 
+    @GetMapping("/count-cart/{userId}")
+    public ResponseEntity<Integer> getCountCart(@PathVariable Long userId) {
+        log.info("REST request to get count cart by user id : {}", userId);
+        Integer countCart = cartService.getCountCart(userId);
+        return ResponseEntity.ok().body(countCart);
+    }
+
 }

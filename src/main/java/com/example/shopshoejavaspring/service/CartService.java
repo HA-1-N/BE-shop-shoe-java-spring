@@ -81,4 +81,8 @@ public class CartService {
         }
         return cartItemDTOS;
     }
+
+    public Integer getCountCart(Long userId) {
+        return cartItemRepository.countByCartUserId(userId);
+    }
 }

@@ -15,4 +15,6 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
             " where (u.id = :userId) ",
             nativeQuery = true)
     List<CartItem> findByCartUserId(@Param("userId") Long userId);
+
+    Integer countByCartUserId(Long userId);
 }
