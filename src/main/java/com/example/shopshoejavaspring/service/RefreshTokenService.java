@@ -7,6 +7,7 @@ import com.example.shopshoejavaspring.repository.RefreshTokenRepository;
 import com.example.shopshoejavaspring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -59,5 +60,10 @@ public class RefreshTokenService {
             throw new RuntimeException("Refresh token was expired. Please make a new login request");
         }
         return refreshToken;
+    }
+
+    @Transactional
+    public void deleteByToken(String refreshToken) {
+        refreshTokenRepository.deleteByToken(refreshToken);
     }
 }

@@ -50,7 +50,8 @@ public class SecurityConfig {
                         "/api/brand/get-all",
                         "/api/category/get-all",
                         "/api/color/get-all",
-                        "/api/size/get-all"
+                        "/api/size/get-all",
+                        "/api/cart/count-cart/**"
                 )
                 .permitAll()
                 .antMatchers(

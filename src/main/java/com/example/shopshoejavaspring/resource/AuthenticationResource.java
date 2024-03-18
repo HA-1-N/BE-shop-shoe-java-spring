@@ -91,4 +91,12 @@ public class AuthenticationResource {
         log.debug("END - /api/auth/refresh-token");
         return ResponseEntity.status(HttpStatus.OK).body("Refresh token success");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestParam("refreshToken") String refreshToken) {
+        log.debug("BEGIN - /api/auth/logout");
+        refreshTokenService.deleteByToken(refreshToken);
+        log.debug("END - /api/auth/logout");
+        return ResponseEntity.status(HttpStatus.OK).body("Logout success");
+    }
 }

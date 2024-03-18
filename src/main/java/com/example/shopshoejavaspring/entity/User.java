@@ -75,10 +75,16 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Cart> carts;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Order> orders;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserAddress> userAddresses;
 
     public Set<Role> getRoles() {
         return roles;
