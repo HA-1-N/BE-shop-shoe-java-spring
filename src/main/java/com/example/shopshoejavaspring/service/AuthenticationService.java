@@ -1,9 +1,12 @@
 package com.example.shopshoejavaspring.service;
 
+import com.example.shopshoejavaspring.dto.refreshToken.RequestRefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
+import com.example.shopshoejavaspring.dto.user.ChangePasswordDTO;
 import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
+import com.example.shopshoejavaspring.entity.RefreshToken;
 import com.example.shopshoejavaspring.entity.Role;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.repository.RoleRepository;
@@ -11,6 +14,7 @@ import com.example.shopshoejavaspring.repository.UserRepository;
 import com.example.shopshoejavaspring.utils.FileStorageService;
 import com.example.shopshoejavaspring.utils.config.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -40,12 +45,15 @@ public class AuthenticationService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final RefreshTokenService refreshTokenService;
+
     public UserDTO login(UserLoginDTO userLoginDTO) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLoginDTO.getEmail(), userLoginDTO.getPassword())
         );
         User user = userRepository.findByEmail(userLoginDTO.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
         String jwtToken = jwtService.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 //        UserDTO userDTO = UserDTO.builder()
 //                .id(user.getId())
 //                .name(user.getName())
@@ -73,6 +81,7 @@ public class AuthenticationService {
         userDTO.setDateOfBirth(user.getDateOfBirth());
         userDTO.setImage(user.getImage());
         userDTO.setToken(jwtToken);
+        userDTO.setRefreshToken(refreshToken.getToken());
 
         List<RoleDTO> listRoleDTO = new ArrayList<>();
 
@@ -93,7 +102,7 @@ public class AuthenticationService {
         user.setName(userDTO.getName());
 
         Optional<User> checkEmailUser = userRepository.findByEmail(userDTO.getEmail());
-        if (checkEmailUser != null) {
+        if (checkEmailUser.isPresent()) {
             throw new RuntimeException("Email is exist");
         } else {
             user.setEmail(userDTO.getEmail());
@@ -102,7 +111,7 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
         Optional<User> checkPhoneUser = userRepository.findUserByPhoneContains(userDTO.getPhone());
-        if (checkPhoneUser != null) {
+        if (checkPhoneUser.isPresent()) {
             throw new RuntimeException("Phone is exist");
         } else {
             user.setPhone(userDTO.getPhone());
@@ -110,6 +119,7 @@ public class AuthenticationService {
 
         user.setGender(userDTO.getGender());
         user.setAge(userDTO.getAge());
+        user.setPrefix(userDTO.getPrefix());
         user.setDateOfBirth(userDTO.getDateOfBirth());
 
         String imageUrl = fileStorageService.uploadImage(file);
@@ -139,4 +149,14 @@ public class AuthenticationService {
         userRepository.save(user);
         return "Reset password success";
     }
+
+    public void changePassword(ChangePasswordDTO changePasswordDTO) {
+        User user = userRepository.findById(changePasswordDTO.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        if (!passwordEncoder.matches(changePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+        userRepository.save(user);
+    }
+
 }

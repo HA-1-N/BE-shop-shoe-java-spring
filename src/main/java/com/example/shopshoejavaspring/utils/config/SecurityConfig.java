@@ -50,13 +50,17 @@ public class SecurityConfig {
                         "/api/brand/get-all",
                         "/api/category/get-all",
                         "/api/color/get-all",
-                        "/api/size/get-all"
+                        "/api/size/get-all",
+                        "/api/cart/count-cart/**"
                 )
                 .permitAll()
                 .antMatchers(
                         "/api/banners/create/",
                         "/api/brand/filter/**"
                 ).hasAuthority(AuthoritiesConstants.ADMIN)
+                .antMatchers(
+                        "/api/cart/add-to-cart"
+                ).hasAuthority(AuthoritiesConstants.USER)
                 .anyRequest()
                 .authenticated() // all request must be authenticated
                 .and()
