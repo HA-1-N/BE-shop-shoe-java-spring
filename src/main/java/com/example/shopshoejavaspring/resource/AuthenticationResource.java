@@ -80,7 +80,7 @@ public class AuthenticationResource {
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody RequestRefreshTokenDTO requestRefreshTokenDTO) {
         log.debug("BEGIN - /api/auth/refresh-token");
-        refreshTokenService.refreshToken(requestRefreshTokenDTO)
+         return refreshTokenService.refreshToken(requestRefreshTokenDTO)
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
@@ -88,8 +88,8 @@ public class AuthenticationResource {
                     return ResponseEntity.status(HttpStatus.OK).body(new RequestRefreshTokenDTO(token));
                 })
                 .orElseThrow(() -> new RuntimeException("Invalid refresh token"));
-        log.debug("END - /api/auth/refresh-token");
-        return ResponseEntity.status(HttpStatus.OK).body("Refresh token success");
+//        log.debug("END - /api/auth/refresh-token");
+
     }
 
     @PostMapping("/logout")

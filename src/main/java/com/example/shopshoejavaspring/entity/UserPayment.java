@@ -36,7 +36,7 @@ public class UserPayment {
     private int expiry;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="payment_modthod_id", referencedColumnName = "id")
+    @JoinColumn(name ="payment_method_id", referencedColumnName = "id")
     private Order order;
 
 }

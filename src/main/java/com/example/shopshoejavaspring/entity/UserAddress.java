@@ -18,6 +18,9 @@ public class UserAddress {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "address")
     private String address;
 
@@ -27,8 +30,14 @@ public class UserAddress {
     @Column(name = "country")
     private String country;
 
+    @Column(name = "prefix")
+    private String prefix;
+
     @Column(name = "phone")
     private String phone;
+
+    @Column(name = "note")
+    private String note;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
