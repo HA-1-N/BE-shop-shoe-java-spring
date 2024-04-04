@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @RequiredArgsConstructor
@@ -30,17 +28,35 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_status_id", referencedColumnName = "id")
+    @JsonIgnore
     private OrderStatus orderStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_method_id", referencedColumnName = "id")
+    @JsonIgnore
     private ShippingMethod shippingMethod;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
     @JsonIgnore
-    private List<UserPayment> userPayments = new ArrayList<>();
+    private UserPayment userPayment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_address_id", referencedColumnName = "id")
+    @JsonIgnore
+    private UserAddress userAddress;
 
     @Column(name = "order_date")
-    private Date date;
+    private Date orderDate;
+
+    @Column(name = "order_total")
+    private Double orderTotal;
+
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(name = "order_products",
+            joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
+    private Set<Product> products = new HashSet<>();
 
 }

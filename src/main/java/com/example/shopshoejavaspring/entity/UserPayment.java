@@ -1,5 +1,6 @@
 package com.example.shopshoejavaspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -34,9 +35,5 @@ public class UserPayment {
 
     @Column(name = "expiry")
     private int expiry;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="payment_modthod_id", referencedColumnName = "id")
-    private Order order;
 
 }

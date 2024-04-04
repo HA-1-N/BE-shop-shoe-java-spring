@@ -85,4 +85,9 @@ public class CartService {
     public Integer getCountCart(Long userId) {
         return cartItemRepository.countByCartUserId(userId);
     }
+
+    public void clearCart(Long userId) {
+        List<CartItem> cartItems = cartItemRepository.findByCartUserId(userId);
+        cartItemRepository.deleteAll(cartItems);
+    }
 }

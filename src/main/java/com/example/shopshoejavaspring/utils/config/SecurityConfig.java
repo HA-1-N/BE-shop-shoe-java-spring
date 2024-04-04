@@ -59,7 +59,8 @@ public class SecurityConfig {
                         "/api/brand/filter/**"
                 ).hasAuthority(AuthoritiesConstants.ADMIN)
                 .antMatchers(
-                        "/api/cart/add-to-cart"
+                        "/api/cart/add-to-cart",
+                        "/api/order/get-order-by-user-id/**"
                 ).hasAuthority(AuthoritiesConstants.USER)
                 .anyRequest()
                 .authenticated() // all request must be authenticated
