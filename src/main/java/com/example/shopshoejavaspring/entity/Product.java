@@ -69,6 +69,15 @@ public class Product {
     @ToString.Exclude
     private Set<HotCategory> hotCategories = new HashSet<>();
 
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "order_products",
+            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
+            inverseJoinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"))
+    @BatchSize(size = 20)
+    @ToString.Exclude
+    private Set<Order> orders = new HashSet<>();
+
 //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
 //    @JsonIgnore
 //    private List<ProductQuantity> productQuantities = new ArrayList<>();

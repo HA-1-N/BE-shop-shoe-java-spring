@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface OrderStatusRepository extends JpaRepository<OrderStatus, Long> {
 
     Page<OrderStatus> findOrderStatusByStatusContaining(String status, Pageable pageable);
+
+    OrderStatus findOrderStatusByStatusContaining(String status);
 }

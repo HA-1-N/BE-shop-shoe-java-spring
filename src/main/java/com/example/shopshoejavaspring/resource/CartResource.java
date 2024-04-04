@@ -49,4 +49,10 @@ public class CartResource {
         return ResponseEntity.ok().body(countCart);
     }
 
+    @DeleteMapping("/clear-cart/{userId}")
+    public ResponseEntity<String> clearCart(@PathVariable Long userId) {
+        log.info("REST request to clear cart by user id : {}", userId);
+        cartService.clearCart(userId);
+        return ResponseEntity.ok().body("Clear cart success");
+    }
 }

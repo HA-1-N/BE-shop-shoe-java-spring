@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PaymentTypeRepository extends JpaRepository<PaymentType, Long> {
     Page<PaymentType> findPaymentTypeByTypeContaining(String type, Pageable pageable);
+
+    PaymentType findPaymentTypeByTypeContaining(String type);
 }

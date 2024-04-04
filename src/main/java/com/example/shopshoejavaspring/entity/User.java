@@ -86,6 +86,10 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<UserAddress> userAddresses;
 
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserPayment> userPayments;
+
     public Set<Role> getRoles() {
         return roles;
     }
