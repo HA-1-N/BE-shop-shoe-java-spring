@@ -4,6 +4,7 @@ import com.example.shopshoejavaspring.dto.role.RoleDTO;
 import com.example.shopshoejavaspring.dto.user.FilterUserDTO;
 import com.example.shopshoejavaspring.dto.user.ListUserDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
+import com.example.shopshoejavaspring.dto.user.UserDetailUpdateDTO;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.service.UserService;
 import javafx.scene.control.Pagination;
@@ -45,7 +46,7 @@ public class UserResource {
         headers.add("X-Page-Number", String.valueOf(listUser.getNumber()));
         headers.add("X-Page-Size", String.valueOf(listUser.getSize()));
         log.debug("END - /api/user/filter");
-        return ResponseEntity.status(HttpStatus.OK).body(listUser.getContent());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listUser.getContent());
     }
 
     @GetMapping("/get-all")
@@ -78,5 +79,14 @@ public class UserResource {
         userDTO.setRoles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getCode(), role.getText())).collect(Collectors.toList()));
         log.debug("END - /api/user/update/{}", id);
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+    }
+
+    @PostMapping("/update/user-detail/{id}")
+    public ResponseEntity<UserDetailUpdateDTO> updateUserDetail(@PathVariable("id") Long id , @RequestParam(value = "file", required = false)MultipartFile file, @Valid @RequestPart("data") UserDetailUpdateDTO userDetailUpdateDTO) throws IOException {
+        log.debug("BEGIN - /api/user/update/user-detail/{}", id);
+        User user = userService.updateUserDetail(id, userDetailUpdateDTO, file);
+        userDetailUpdateDTO.setId(user.getId());
+        log.debug("END - /api/user/update/user-detail/{}", id);
+        return ResponseEntity.status(HttpStatus.OK).body(userDetailUpdateDTO);
     }
 }

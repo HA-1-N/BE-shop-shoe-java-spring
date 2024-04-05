@@ -19,12 +19,15 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query(value = "select * from user u where " +
+    @Query(value = "select * from user u" +
+            " left join user_role ur on ur.user_id = u.id" +
+            " where " +
             "(:name is null or u.name like concat ('%', :name ,'%')) and " +
             "(:email is null or u.email like concat ('%', :email ,'%')) and " +
             "(:gender is null or u.gender = :gender) and " +
             "(:phone is null or u.phone like concat ('%', :phone ,'%')) and " +
-            "(:dateOfBirth is null or u.date_of_birth = :dateOfBirth)",
+            "(:dateOfBirth is null or u.date_of_birth = :dateOfBirth) " +
+            "group by u.id",
             nativeQuery = true)
     Page<User> filterUser(
             @Param("name") String name,
@@ -43,4 +46,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByEmail(String email);
 
     User findUserByEmailContains(String email);
+
+    Optional<User> findUserByPhoneContains(String phone);
 }

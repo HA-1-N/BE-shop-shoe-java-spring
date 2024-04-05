@@ -48,6 +48,9 @@ public class User implements UserDetails {
     @Column(name = "age")
     private Integer age;
 
+    @Column(name = "prefix")
+    private String prefix;
+
     @Column(name = "phone")
     private String phone;
 
@@ -70,6 +73,22 @@ public class User implements UserDetails {
     @BatchSize(size = 20)
     @ToString.Exclude
     private Set<Role> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Cart> carts;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Order> orders;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserAddress> userAddresses;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserPayment> userPayments;
 
     public Set<Role> getRoles() {
         return roles;

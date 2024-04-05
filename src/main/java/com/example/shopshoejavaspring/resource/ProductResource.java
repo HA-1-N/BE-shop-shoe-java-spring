@@ -1,15 +1,13 @@
 package com.example.shopshoejavaspring.resource;
 
-import com.example.shopshoejavaspring.dto.product.CreateProductDTO;
-import com.example.shopshoejavaspring.dto.product.FilterProductDTO;
-import com.example.shopshoejavaspring.dto.product.ProductDTO;
-import com.example.shopshoejavaspring.dto.product.UpdateProductDTO;
+import com.example.shopshoejavaspring.dto.product.*;
 import com.example.shopshoejavaspring.entity.Product;
 import com.example.shopshoejavaspring.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +38,26 @@ public class ProductResource {
     public ResponseEntity<List<ProductDTO>> filterProduct(@RequestBody FilterProductDTO filterProductDTO, Pageable pageable) throws IOException {
         log.debug("BEGIN - /api/product/filter");
         Page<ProductDTO> listProduct = productService.filter(filterProductDTO, pageable);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listProduct.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(listProduct.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(listProduct.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(listProduct.getSize()));
         log.debug("END - /api/product/filter");
-        return ResponseEntity.status(HttpStatus.OK).body(listProduct.getContent());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listProduct.getContent());
+    }
+
+    @PostMapping("/filter-website")
+    public ResponseEntity<List<ProductDTO>> filterProductWebsite(@RequestBody FilterProductWebsiteDTO filterProductWebsiteDTO, Pageable pageable) throws IOException {
+        log.debug("BEGIN - /api/product/filter-website");
+        Page<ProductDTO> listProduct = productService.filterWebsite(filterProductWebsiteDTO, pageable);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listProduct.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(listProduct.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(listProduct.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(listProduct.getSize()));
+        log.debug("END - /api/product/filter-website");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listProduct.getContent());
     }
 
     @GetMapping("/get-by-id/{id}")
@@ -50,6 +66,22 @@ public class ProductResource {
         ProductDTO productDTO = productService.findById(id);
         log.debug("END - /api/product/get-by-id/" + id);
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<ProductDTO>> getAllProduct() throws IOException {
+        log.debug("BEGIN - /api/product/get-all");
+        List<ProductDTO> listProductDTO = productService.findAll();
+        log.debug("END - /api/product/get-all");
+        return ResponseEntity.status(HttpStatus.OK).body(listProductDTO);
+    }
+
+    @GetMapping("/get-id-name")
+    public ResponseEntity<List<GetIdNameProductDTO>> getIdNameProduct() throws IOException {
+        log.debug("BEGIN - /api/product/get-id-name");
+        List<GetIdNameProductDTO> listProductDTO = productService.findIdName();
+        log.debug("END - /api/product/get-id-name");
+        return ResponseEntity.status(HttpStatus.OK).body(listProductDTO);
     }
 
     @PostMapping("/update")
@@ -66,5 +98,18 @@ public class ProductResource {
         productService.delete(id);
         log.debug("END - /api/product/delete/" + id);
         return ResponseEntity.ok().body("Delete success");
+    }
+
+    @GetMapping("/get-product-by-hot-category/{id}")
+    public ResponseEntity<List<ProductDTO>> getProductByHotCategory(@PathVariable Long id, Pageable pageable) throws IOException {
+        log.debug("BEGIN - /api/product/get-product-by-category/" + id);
+        List<ProductDTO> listProductDTO = productService.findByHotCategory(id, pageable);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(listProductDTO.size()));
+        headers.add("X-Total-Pages", String.valueOf(1));
+        headers.add("X-Page-Number", String.valueOf(0));
+        headers.add("X-Page-Size", String.valueOf(listProductDTO.size()));
+        log.debug("END - /api/product/get-product-by-category/" + id);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(listProductDTO);
     }
 }

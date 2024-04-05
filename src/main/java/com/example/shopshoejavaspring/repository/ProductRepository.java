@@ -16,14 +16,16 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query(value = "select p.* from product p " +
-            "left join product_size ps on ps.product_id = p.id " +
+    @Query(value = "select p.* from product p" +
+            " left join product_quantity pq on pq.product_id = p.id" +
+            " left join size s on s.id = pq.size_id" +
+            " left join color c on c.id = pq.color_id " +
             "where (:name is null or p.name like concat('%', :name, '%')) " +
             "and (:status is null or p.status = :status) " +
             "and (:categoryId is null or p.category_id = :categoryId) " +
             "and (:brandId is null or p.brand_id = :brandId) " +
-            "and ( coalesce(null, :sizeId) is null or ps.size_id in (:sizeId) ) " +
-            "and ( coalesce(null, :colorId) is null or p.id in (select pc.product_id from product_color pc where pc.color_id in (:colorId)) ) " +
+            "and ( coalesce(null, :sizeId) is null or pq.size_id in (:sizeId) ) " +
+            "and ( coalesce(null, :colorId) is null or pq.color_id in (:colorId) ) " +
             "and (:minPrice is null or p.price >= :minPrice) " +
             "and (:maxPrice is null or p.price <= :maxPrice) " +
             "group by p.id " +
@@ -38,4 +40,38 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
             Pageable pageable);
+
+    Product findByNameContains(String name);
+
+    @Query(value = "select * from product p " +
+            "left join product_hot_category phc on phc.product_id = p.id " +
+            "left join hot_category hc on hc.id = phc.hot_category_id " +
+            "where hc.id = :id ",
+            nativeQuery = true)
+    List<Product> findByHotCategory(@Param("id") Long id, Pageable pageable);
+
+    @Query(value = "select p.* from product p" +
+            " left join product_quantity pq on pq.product_id = p.id" +
+            " left join size s on s.id = pq.size_id" +
+            " left join color c on c.id = pq.color_id " +
+            "where (:name is null or p.name like concat('%', :name, '%')) " +
+            "and (:status is null or p.status = :status) " +
+            "and ( coalesce(null, :categoryId) is null or p.category_id in (:categoryId) ) " +
+            "and ( coalesce(null, :brandId) is null or p.brand_id in (:brandId) ) " +
+            "and ( coalesce(null, :sizeId) is null or pq.size_id in (:sizeId) ) " +
+            "and ( coalesce(null, :colorId) is null or pq.color_id in (:colorId) ) " +
+            "and (:minPrice is null or p.price >= :minPrice) " +
+            "and (:maxPrice is null or p.price <= :maxPrice) " +
+            "group by p.id " +
+            "order by p.name asc ",
+            nativeQuery = true)
+    Page<Product> filterWebsite(@Param("name") String name,
+                                @Param("status") Long status,
+                                @Param("categoryId") List<Long> categoryId,
+                                @Param("brandId") List<Long> brandId,
+                                @Param("sizeId") List<Long> sizeId,
+                                @Param("colorId") List<Long> colorId,
+                                @Param("minPrice") Double minPrice,
+                                @Param("maxPrice") Double maxPrice,
+                                Pageable pageable);
 }

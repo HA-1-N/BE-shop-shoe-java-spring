@@ -31,6 +31,8 @@ public class ListUserDTO {
 
     private Integer age;
 
+    private String prefix;
+
     private String phone;
 
     private Date dateOfBirth;

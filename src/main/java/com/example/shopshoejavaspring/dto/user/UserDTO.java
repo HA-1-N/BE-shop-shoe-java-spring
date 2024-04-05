@@ -36,6 +36,8 @@ public class UserDTO {
 
     private Integer age;
 
+    private String prefix;
+
     private String phone;
 
     private Date dateOfBirth;
@@ -43,6 +45,8 @@ public class UserDTO {
     private String image;
 
     private String token;
+
+    private String refreshToken;
 
     private List<Long> roleIds = new ArrayList<>();
 

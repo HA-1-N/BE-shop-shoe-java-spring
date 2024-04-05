@@ -3,10 +3,11 @@ package com.example.shopshoejavaspring.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.BatchSize;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,8 +33,8 @@ public class Product {
     @Column(name = "price")
     private Double price;
 
-    @Column(name = "quantity")
-    private Integer quantity;
+//    @Column(name = "quantity")
+//    private Integer quantity;
 
     @Column(name = "description")
     private String description;
@@ -55,18 +56,44 @@ public class Product {
     @JsonIgnore
     private List<ProductImage> productImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "product_color",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "color_id"))
-    private Set<Color> colors = new HashSet<>();
+    private List<ProductQuantity> productQuantities = new ArrayList<>();
 
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "product_size",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "size_id"))
-    private Set<Size> sizes = new HashSet<>();
+    @JoinTable(name = "product_hot_category",
+            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
+            inverseJoinColumns = @JoinColumn(name = "hot_category_id", referencedColumnName = "id"))
+    @BatchSize(size = 20)
+    @ToString.Exclude
+    private Set<HotCategory> hotCategories = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "order_products",
+            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
+            inverseJoinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"))
+    @BatchSize(size = 20)
+    @ToString.Exclude
+    private Set<Order> orders = new HashSet<>();
+
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
+//    @JsonIgnore
+//    private List<ProductQuantity> productQuantities = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL) // 1 sản phẩm có nhiều quantity
+//    @JsonIgnore
+//    private List<ProductSize> productSizes = new ArrayList<>();
+
+//    @JsonIgnore
+//    @ManyToOne
+//    @JoinColumn(name = "color_id", insertable = true, updatable = false)
+//    private Color color = new Color();
+//
+//    @JsonIgnoreProperties(value = {"product", "size"}, allowGetters = true)
+//    @ManyToOne
+//    @JoinColumn(name = "size_id", insertable = true, updatable = false)
+//    private Size size = new Size();
 
 }
