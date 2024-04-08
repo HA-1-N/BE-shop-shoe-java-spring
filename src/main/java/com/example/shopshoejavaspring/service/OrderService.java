@@ -1,6 +1,7 @@
 package com.example.shopshoejavaspring.service;
 
 import com.example.shopshoejavaspring.dto.order.OrderCheckoutDTO;
+import com.example.shopshoejavaspring.dto.product.ProductCheckoutDTO;
 import com.example.shopshoejavaspring.entity.*;
 import com.example.shopshoejavaspring.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -33,12 +34,18 @@ public class OrderService {
 
     private final ProductRepository productRepository;
 
+    private final ProductQuantityRepository productQuantityRepository;
+
+    private final OrderProductRepository orderProductRepository;
+
     public void checkout(OrderCheckoutDTO orderCheckoutDTO) {
 
         Order order = new Order();
 
+        User user = userRepository.findById(orderCheckoutDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+
         UserAddress userAddress = new UserAddress();
-        userAddress.setUser(userRepository.findById(orderCheckoutDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
+        userAddress.setUser(user);
         userAddress.setName(orderCheckoutDTO.getName());
         userAddress.setAddress(orderCheckoutDTO.getAddress());
         userAddress.setCity(orderCheckoutDTO.getCity());
@@ -47,6 +54,8 @@ public class OrderService {
         userAddress.setPrefix(orderCheckoutDTO.getPrefix());
 
         order.setUserAddress(userAddress);
+
+        order.setUser(user);
 
         ShippingMethod shippingMethod = shippingMethodRepository.findShippingMethodByMethodContaining(orderCheckoutDTO.getShippingMethod());
 
@@ -68,15 +77,31 @@ public class OrderService {
         order.setUserPayment(userPayment);
         userAddressRepository.save(userAddress);
 
-        Set<Product> products = orderCheckoutDTO.getProductIds().stream()
-                .map(productId -> productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found")))
-                .collect(Collectors.toSet());
-
-        order.setProducts(products);
-
         order.setOrderDate(orderCheckoutDTO.getOrderDate());
         order.setOrderTotal(orderCheckoutDTO.getOrderTotal());
+
         orderRepository.save(order);
+
+        for (ProductCheckoutDTO productCheckoutDTO : orderCheckoutDTO.getProductCheckouts()) {
+            Product product = productRepository.findById(productCheckoutDTO.getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+            ProductQuantity productQuantity = productQuantityRepository.findBySizeIdAndColorIdAndProductId(productCheckoutDTO.getSizeId(), productCheckoutDTO.getColorId(), productCheckoutDTO.getId())
+                    .orElseThrow(() -> new RuntimeException("Product quantity not found"));
+
+            // Kiểm tra xem số lượng đặt hàng có lớn hơn số lượng trong kho không
+            if (productQuantity.getQuantity() < productCheckoutDTO.getQuantity()) {
+                throw new RuntimeException("Not enough quantity for product: " + product.getName());
+            }
+
+            productQuantity.setQuantity(productQuantity.getQuantity() - productCheckoutDTO.getQuantity());
+
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setQuantity(productCheckoutDTO.getQuantity());
+            orderProduct.setOrder(order);
+            orderProduct.setProduct(product);
+            orderProduct.setTotalPrice(productCheckoutDTO.getTotalPrice());
+
+            orderProductRepository.save(orderProduct);
+        }
     }
 
     public Order getOrderByUserId(Long userId) {
