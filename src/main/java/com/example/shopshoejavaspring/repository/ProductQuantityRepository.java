@@ -35,4 +35,6 @@ public interface ProductQuantityRepository extends JpaRepository<ProductQuantity
 
     @Query(value = "select * from product_quantity pq where pq.product_id = (:productId) and pq.color_id = (:colorId) and pq.size_id = (:sizeId)", nativeQuery = true)
     Optional<ProductQuantity> findBySizeIdAndColorIdAndProductId(@Param("sizeId") Long sizeId, @Param("colorId") Long colorId,@Param("productId") Long productId);
+
+
 }
