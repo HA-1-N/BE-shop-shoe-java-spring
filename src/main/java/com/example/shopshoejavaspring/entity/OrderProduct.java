@@ -29,6 +29,16 @@ public class OrderProduct {
     @JoinColumn(name = "product_id", insertable = true, updatable = false)
     private Product product;
 
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "size_id", insertable = true, updatable = false)
+    private Size size;
+    
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "color_id", insertable = true, updatable = false)
+    private Color color;
+
     @Column(name = "quantity")
     private Long quantity;
 

@@ -6,10 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    Order findOrderByUserId(Long userId);
-
-    @Query(value = "select * from orders where user_id = :userId", nativeQuery = true)
-    Order findOrders(@Param("userId") Long userId);
+    List<Order> findByUserId(Long userId);
 }
