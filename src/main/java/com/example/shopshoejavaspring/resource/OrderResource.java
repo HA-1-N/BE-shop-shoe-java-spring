@@ -1,11 +1,17 @@
 package com.example.shopshoejavaspring.resource;
 
+import com.example.shopshoejavaspring.dto.order.FilterOrderDTO;
 import com.example.shopshoejavaspring.dto.order.OrderCheckoutDTO;
 import com.example.shopshoejavaspring.dto.order.OrderDTO;
+import com.example.shopshoejavaspring.dto.order.UpdateOrderDTO;
+import com.example.shopshoejavaspring.dto.orderStatus.OrderStatusDTO;
 import com.example.shopshoejavaspring.entity.Order;
 import com.example.shopshoejavaspring.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +24,18 @@ import java.util.List;
 public class OrderResource {
 
     private final OrderService orderService;
+
+    @PostMapping("/filter")
+    public ResponseEntity<List<OrderDTO>> filter(@RequestBody FilterOrderDTO orderDTO, Pageable pageable) {
+        log.info("REST request to filter order by: {}", orderDTO);
+        Page<OrderDTO> orders = orderService.filter(orderDTO, pageable);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(orders.getTotalElements()));
+        headers.add("X-Total-Pages", String.valueOf(orders.getTotalPages()));
+        headers.add("X-Page-Number", String.valueOf(orders.getNumber()));
+        headers.add("X-Page-Size", String.valueOf(orders.getSize()));
+        return ResponseEntity.ok().headers(headers).body(orders.getContent());
+    }
 
     @PostMapping("/checkout")
     public ResponseEntity<OrderCheckoutDTO> checkout(@RequestBody OrderCheckoutDTO orderCheckoutDTO) {
@@ -37,6 +55,13 @@ public class OrderResource {
     public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long orderId) {
         log.info("REST request to get order by id : {}", orderId);
         OrderDTO order = orderService.getOrderById(orderId);
+        return ResponseEntity.ok().body(order);
+    }
+
+    @PostMapping("/change-order-status")
+    public ResponseEntity<OrderDTO> changeOrderStatus(@RequestBody UpdateOrderDTO updateOrderDTO) {
+        log.info("REST request to update order status : {}", updateOrderDTO);
+        OrderDTO order = orderService.changeOrderStatus(updateOrderDTO);
         return ResponseEntity.ok().body(order);
     }
 

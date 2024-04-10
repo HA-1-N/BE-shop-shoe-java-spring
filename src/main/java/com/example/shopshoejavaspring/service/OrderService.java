@@ -1,12 +1,18 @@
 package com.example.shopshoejavaspring.service;
 
+import com.example.shopshoejavaspring.dto.order.FilterOrderDTO;
 import com.example.shopshoejavaspring.dto.order.OrderCheckoutDTO;
 import com.example.shopshoejavaspring.dto.order.OrderDTO;
+import com.example.shopshoejavaspring.dto.order.UpdateOrderDTO;
+import com.example.shopshoejavaspring.dto.orderStatus.OrderStatusDTO;
 import com.example.shopshoejavaspring.dto.product.ProductCheckoutDTO;
 import com.example.shopshoejavaspring.entity.*;
 import com.example.shopshoejavaspring.mapper.OrderMapper;
 import com.example.shopshoejavaspring.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -128,5 +134,20 @@ public class OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
         OrderDTO orderDTO = orderMapper.toDto(order);
         return orderDTO;
+    }
+
+    public Page<OrderDTO> filter(FilterOrderDTO filterOrderDTO, Pageable pageable) {
+        Page<Order> orders = orderRepository.filter(filterOrderDTO.getOrderDate(), pageable);
+        List<OrderDTO> orderDTOS = orderMapper.toOrderDTOs(orders.getContent());
+//        List<OrderDTO> orderDTOS = orders.stream().map(orderMapper::toDto).collect(Collectors.toList());
+        return new PageImpl<>(orderDTOS, pageable, orders.getTotalElements());
+    }
+
+    public OrderDTO changeOrderStatus(UpdateOrderDTO updateOrderDTO) {
+        Order order = orderRepository.findById(updateOrderDTO.getId()).orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderStatus orderStatus = orderStatusRepository.findById(updateOrderDTO.getStatusId()).orElseThrow(() -> new RuntimeException("Order status not found"));
+        order.setOrderStatus(orderStatus);
+        orderRepository.save(order);
+        return orderMapper.toDto(order);
     }
 }
