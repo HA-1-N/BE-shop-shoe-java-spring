@@ -26,8 +26,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(:email is null or u.email like concat ('%', :email ,'%')) and " +
             "(:gender is null or u.gender = :gender) and " +
             "(:phone is null or u.phone like concat ('%', :phone ,'%')) and " +
-            "(:dateOfBirth is null or u.date_of_birth = :dateOfBirth) " +
-            "group by u.id",
+            "(:dateOfBirth is null or u.date_of_birth = :dateOfBirth) "
+//            +
+//            "group by u.id"
+            ,
             nativeQuery = true)
     Page<User> filterUser(
             @Param("name") String name,
@@ -48,4 +50,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findUserByEmailContains(String email);
 
     Optional<User> findUserByPhoneContains(String phone);
+
+    @Query(value = "SELECT COUNT(u) FROM User u LEFT JOIN u.roles r WHERE r.code = 'USER'")
+    Long getTotalUser();
 }

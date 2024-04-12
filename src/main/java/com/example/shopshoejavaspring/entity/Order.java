@@ -52,11 +52,8 @@ public class Order {
     @Column(name = "order_total")
     private Double orderTotal;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "order")
     @JsonIgnore
-    @JoinTable(name = "order_products",
-            joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"))
-    private Set<Product> products = new HashSet<>();
+    private List<OrderProduct> orderProducts = new ArrayList<>();
 
 }

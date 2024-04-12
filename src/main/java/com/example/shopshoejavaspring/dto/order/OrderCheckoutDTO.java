@@ -1,5 +1,6 @@
 package com.example.shopshoejavaspring.dto.order;
 
+import com.example.shopshoejavaspring.dto.product.ProductCheckoutDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -36,7 +37,7 @@ public class OrderCheckoutDTO {
 
     private Double orderTotal;
 
-    private List<Long> productIds;
+    private List<ProductCheckoutDTO> productCheckouts;
 
 //    private String cardName;
 //

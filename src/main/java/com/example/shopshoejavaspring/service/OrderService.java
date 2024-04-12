@@ -1,9 +1,18 @@
 package com.example.shopshoejavaspring.service;
 
+import com.example.shopshoejavaspring.dto.order.FilterOrderDTO;
 import com.example.shopshoejavaspring.dto.order.OrderCheckoutDTO;
+import com.example.shopshoejavaspring.dto.order.OrderDTO;
+import com.example.shopshoejavaspring.dto.order.UpdateOrderDTO;
+import com.example.shopshoejavaspring.dto.orderStatus.OrderStatusDTO;
+import com.example.shopshoejavaspring.dto.product.ProductCheckoutDTO;
 import com.example.shopshoejavaspring.entity.*;
+import com.example.shopshoejavaspring.mapper.OrderMapper;
 import com.example.shopshoejavaspring.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +28,8 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
+    private final OrderMapper orderMapper;
+
     private final UserRepository userRepository;
 
     private final UserPaymentRepository userPaymentRepository;
@@ -33,12 +44,23 @@ public class OrderService {
 
     private final ProductRepository productRepository;
 
+    private final ProductQuantityRepository productQuantityRepository;
+
+    private final OrderProductRepository orderProductRepository;
+
+    private final ColorRepository colorRepository;
+
+    private final SizeRepository sizeRepository;
+
     public void checkout(OrderCheckoutDTO orderCheckoutDTO) {
 
         Order order = new Order();
 
+        User user = userRepository.findById(orderCheckoutDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+
         UserAddress userAddress = new UserAddress();
-        userAddress.setUser(userRepository.findById(orderCheckoutDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
+
+        userAddress.setUser(user);
         userAddress.setName(orderCheckoutDTO.getName());
         userAddress.setAddress(orderCheckoutDTO.getAddress());
         userAddress.setCity(orderCheckoutDTO.getCity());
@@ -47,6 +69,8 @@ public class OrderService {
         userAddress.setPrefix(orderCheckoutDTO.getPrefix());
 
         order.setUserAddress(userAddress);
+
+        order.setUser(user);
 
         ShippingMethod shippingMethod = shippingMethodRepository.findShippingMethodByMethodContaining(orderCheckoutDTO.getShippingMethod());
 
@@ -68,19 +92,70 @@ public class OrderService {
         order.setUserPayment(userPayment);
         userAddressRepository.save(userAddress);
 
-        Set<Product> products = orderCheckoutDTO.getProductIds().stream()
-                .map(productId -> productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found")))
-                .collect(Collectors.toSet());
-
-        order.setProducts(products);
-
         order.setOrderDate(orderCheckoutDTO.getOrderDate());
         order.setOrderTotal(orderCheckoutDTO.getOrderTotal());
+
         orderRepository.save(order);
+
+        for (ProductCheckoutDTO productCheckoutDTO : orderCheckoutDTO.getProductCheckouts()) {
+            Product product = productRepository.findById(productCheckoutDTO.getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+            ProductQuantity productQuantity = productQuantityRepository.findBySizeIdAndColorIdAndProductId(productCheckoutDTO.getSizeId(), productCheckoutDTO.getColorId(), productCheckoutDTO.getId())
+                    .orElseThrow(() -> new RuntimeException("Product quantity not found"));
+
+            // Kiểm tra xem số lượng đặt hàng có lớn hơn số lượng trong kho không
+            if (productQuantity.getQuantity() < productCheckoutDTO.getQuantity()) {
+                throw new RuntimeException("Not enough quantity for product: " + product.getName());
+            }
+
+            productQuantity.setQuantity(productQuantity.getQuantity() - productCheckoutDTO.getQuantity());
+
+            Color color = colorRepository.findById(productCheckoutDTO.getColorId()).orElseThrow(() -> new RuntimeException("Color not found"));
+            Size size = sizeRepository.findById(productCheckoutDTO.getSizeId()).orElseThrow(() -> new RuntimeException("Size not found"));
+
+            OrderProduct orderProduct = new OrderProduct();
+            orderProduct.setQuantity(productCheckoutDTO.getQuantity());
+            orderProduct.setOrder(order);
+            orderProduct.setProduct(product);
+            orderProduct.setTotalPrice(productCheckoutDTO.getTotalPrice());
+            orderProduct.setColor(color);
+            orderProduct.setSize(size);
+
+            orderProductRepository.save(orderProduct);
+        }
     }
 
-    public Order getOrderByUserId(Long userId) {
-        Order order = orderRepository.findOrders(userId);
-        return order;
+    public List<OrderDTO> getOrderByUserId(Long userId) {
+        List<Order> orders = orderRepository.findByUserId(userId);
+        List<OrderDTO> orderDTOS = orderMapper.toOrderDTOs(orders);
+        return orderDTOS;
+    }
+
+    public OrderDTO getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderDTO orderDTO = orderMapper.toDto(order);
+        return orderDTO;
+    }
+
+    public Page<OrderDTO> filter(FilterOrderDTO filterOrderDTO, Pageable pageable) {
+        Page<Order> orders = orderRepository.filter(filterOrderDTO.getOrderDate(), pageable);
+        List<OrderDTO> orderDTOS = orderMapper.toOrderDTOs(orders.getContent());
+//        List<OrderDTO> orderDTOS = orders.stream().map(orderMapper::toDto).collect(Collectors.toList());
+        return new PageImpl<>(orderDTOS, pageable, orders.getTotalElements());
+    }
+
+    public OrderDTO changeOrderStatus(UpdateOrderDTO updateOrderDTO) {
+        Order order = orderRepository.findById(updateOrderDTO.getId()).orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderStatus orderStatus = orderStatusRepository.findById(updateOrderDTO.getStatusId()).orElseThrow(() -> new RuntimeException("Order status not found"));
+        order.setOrderStatus(orderStatus);
+        orderRepository.save(order);
+        return orderMapper.toDto(order);
+    }
+
+    public Long getTotalOrder() {
+        return orderRepository.count();
+    }
+
+    public Double getTotalRevenue() {
+        return orderRepository.getTotalRevenue();
     }
 }
