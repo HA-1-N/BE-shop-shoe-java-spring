@@ -50,4 +50,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findUserByEmailContains(String email);
 
     Optional<User> findUserByPhoneContains(String phone);
+
+    @Query(value = "SELECT COUNT(u) FROM User u LEFT JOIN u.roles r WHERE r.code = 'USER'")
+    Long getTotalUser();
 }

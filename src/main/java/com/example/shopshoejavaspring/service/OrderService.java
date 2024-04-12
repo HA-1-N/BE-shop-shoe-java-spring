@@ -150,4 +150,12 @@ public class OrderService {
         orderRepository.save(order);
         return orderMapper.toDto(order);
     }
+
+    public Long getTotalOrder() {
+        return orderRepository.count();
+    }
+
+    public Double getTotalRevenue() {
+        return orderRepository.getTotalRevenue();
+    }
 }

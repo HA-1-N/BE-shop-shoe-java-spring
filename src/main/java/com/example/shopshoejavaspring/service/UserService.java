@@ -166,6 +166,19 @@ public class UserService {
         }
     }
 
+    public void deleteUser(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
+
+    public Long getTotalUser() {
+        return userRepository.getTotalUser();
+    }
+
 //    public Optional<UserDTO> getUserWithAuthorities() {
 //        Optional<User> userOptional = SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByEmailIgnoreCase);
 //        return null;

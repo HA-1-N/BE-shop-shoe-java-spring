@@ -65,4 +65,18 @@ public class OrderResource {
         return ResponseEntity.ok().body(order);
     }
 
+    @GetMapping("/total-order")
+    public ResponseEntity<Long> getTotalOrder() {
+        log.info("REST request to get total order");
+        Long totalOrder = orderService.getTotalOrder();
+        return ResponseEntity.ok().body(totalOrder);
+    }
+
+    @GetMapping("/total-revenue")
+    public ResponseEntity<Double> getTotalRevenue() {
+        log.info("REST request to get total revenue");
+        Double totalRevenue = orderService.getTotalRevenue();
+        return ResponseEntity.ok().body(totalRevenue);
+    }
+
 }
