@@ -89,4 +89,24 @@ public class UserResource {
         log.debug("END - /api/user/update/user-detail/{}", id);
         return ResponseEntity.status(HttpStatus.OK).body(userDetailUpdateDTO);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        log.debug("BEGIN - /api/user/delete/{}", id);
+        userService.deleteUser(id);
+        log.debug("END - /api/user/delete/{}", id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/total-user")
+    public ResponseEntity<Long> getTotalUser() {
+        log.debug("BEGIN - /api/user/total-user");
+        Long totalUser = userService.getTotalUser();
+        log.debug("END - /api/user/total-user");
+        return ResponseEntity.status(HttpStatus.OK).body(totalUser);
+    }
+
+
+
+
 }

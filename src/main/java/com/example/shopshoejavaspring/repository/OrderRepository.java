@@ -17,4 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query(value = "select * from orders os where (:orderDate is null or os.order_date = :orderDate)", nativeQuery = true)
     Page<Order> filter(@Param("orderDate")Date orderDate, Pageable pageable);
+
+    @Query(value = "select sum(order_total) from orders", nativeQuery = true)
+    Double getTotalRevenue();
 }
