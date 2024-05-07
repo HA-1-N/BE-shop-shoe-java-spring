@@ -10,10 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,4 +41,12 @@ public class OrderStatusResource {
         headers.add("X-Page-Size", String.valueOf(page.getSize()));
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(page.getContent());
     }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<List<OrderStatusDTO>> getAllOrderStatus() {
+        log.debug("REST request to get all OrderStatus");
+        List<OrderStatusDTO> orderStatusDTOS = orderStatusService.getAllOrderStatus();
+        return ResponseEntity.status(HttpStatus.OK).body(orderStatusDTOS);
+    }
+
 }

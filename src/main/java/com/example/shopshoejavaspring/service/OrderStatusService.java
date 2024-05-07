@@ -33,4 +33,9 @@ public class OrderStatusService {
         List<OrderStatusDTO> orderStatusDTOS = orderStatusMapper.toDto(orderStatus.getContent());
         return new PageImpl<>(orderStatusDTOS, pageable, orderStatus.getTotalElements());
     }
+
+    public List<OrderStatusDTO> getAllOrderStatus() {
+        List<OrderStatus> orderStatus = orderStatusRepository.findAll();
+        return orderStatusMapper.toDto(orderStatus);
+    }
 }
