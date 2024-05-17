@@ -1,9 +1,14 @@
 package com.example.shopshoejavaspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -47,7 +52,8 @@ public class Order {
     private UserAddress userAddress;
 
     @Column(name = "order_date")
-    private Date orderDate;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC+07:00")
+    private Instant orderDate;
 
     @Column(name = "order_total")
     private Double orderTotal;

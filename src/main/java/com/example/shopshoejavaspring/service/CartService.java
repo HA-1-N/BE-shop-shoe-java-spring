@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -47,16 +48,28 @@ public class CartService {
             cartRepository.save(cart); // Lưu giỏ hàng mới vào cơ sở dữ liệu
         }
 
-        CartItem cartItem = new CartItem();
-
         Product product = productRepository.findById(addCartItemDTO.getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
 
-        cartItem.setCart(cart);
-        cartItem.setProduct(product);
-        cartItem.setQuantity(addCartItemDTO.getQuantity());
-        cartItem.setColorId(addCartItemDTO.getColorId());
-        cartItem.setSizeId(addCartItemDTO.getSizeId());
-        cartItemRepository.save(cartItem);
+        Optional<CartItem> existCartItemOpt = cart.getCartItemList().stream()
+                .filter(item -> item.getProduct().getId().equals(addCartItemDTO.getProductId())
+                        && item.getColorId().equals(addCartItemDTO.getColorId())
+                        && item.getSizeId().equals(addCartItemDTO.getSizeId()))
+                .findFirst();
+
+
+        if (existCartItemOpt.isPresent()) {
+            CartItem existCartItem = existCartItemOpt.get();
+            existCartItem.setQuantity(existCartItem.getQuantity() + addCartItemDTO.getQuantity());
+            cartItemRepository.save(existCartItem);
+        } else {
+            CartItem cartItem = new CartItem();
+            cartItem.setCart(cart);
+            cartItem.setProduct(product);
+            cartItem.setQuantity(addCartItemDTO.getQuantity());
+            cartItem.setColorId(addCartItemDTO.getColorId());
+            cartItem.setSizeId(addCartItemDTO.getSizeId());
+            cartItemRepository.save(cartItem);
+        }
         return addCartItemDTO;
     }
 

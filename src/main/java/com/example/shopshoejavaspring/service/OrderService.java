@@ -13,10 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -92,7 +96,16 @@ public class OrderService {
         order.setUserPayment(userPayment);
         userAddressRepository.save(userAddress);
 
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+//        Instant instant = Instant.from(formatter.parse(orderCheckoutDTO.getOrderDate().toString()));
+//        order.setOrderDate(instant);
+
+//        String orderDateStr = orderCheckoutDTO.getOrderDate().toString();
+//        Instant instant = Instant.parse(orderDateStr);
+//        order.setOrderDate(instant);
+
         order.setOrderDate(orderCheckoutDTO.getOrderDate());
+
         order.setOrderTotal(orderCheckoutDTO.getOrderTotal());
 
         orderRepository.save(order);
@@ -158,4 +171,5 @@ public class OrderService {
     public Double getTotalRevenue() {
         return orderRepository.getTotalRevenue();
     }
+
 }
