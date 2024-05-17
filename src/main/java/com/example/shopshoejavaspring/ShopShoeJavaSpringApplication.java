@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.example.shopshoejavaspring.*"})
 @EntityScan("com.example.shopshoejavaspring.entity")
@@ -14,4 +17,9 @@ public class ShopShoeJavaSpringApplication {
         SpringApplication.run(ShopShoeJavaSpringApplication.class, args);
     }
 
+    @PostConstruct
+    public void init() {
+        // Setting Spring Boot SetTimeZone
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+    }
 }
