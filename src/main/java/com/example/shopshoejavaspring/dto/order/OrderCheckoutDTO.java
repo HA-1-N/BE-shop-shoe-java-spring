@@ -1,9 +1,13 @@
 package com.example.shopshoejavaspring.dto.order;
 
 import com.example.shopshoejavaspring.dto.product.ProductCheckoutDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +37,11 @@ public class OrderCheckoutDTO {
 
     private String note;
 
-    private Date orderDate;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+//    private Instant orderDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    private Instant orderDate;
 
     private Double orderTotal;
 

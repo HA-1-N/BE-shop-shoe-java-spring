@@ -5,9 +5,14 @@ import com.example.shopshoejavaspring.dto.shippingMethod.ShippingMethodDTO;
 import com.example.shopshoejavaspring.dto.user.UserAddressDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.dto.user.UserPaymentDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +32,8 @@ public class OrderDTO {
 
     private UserAddressDTO userAddress;
 
-    private Date orderDate;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    private Instant orderDate;
 
     private Double orderTotal;
 
