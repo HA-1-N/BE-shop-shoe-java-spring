@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -138,7 +139,8 @@ public class OrderService {
     }
 
     public List<OrderDTO> getOrderByUserId(Long userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderDate");
+        List<Order> orders = orderRepository.findByUserId(userId, sort);
         List<OrderDTO> orderDTOS = orderMapper.toOrderDTOs(orders);
         return orderDTOS;
     }
