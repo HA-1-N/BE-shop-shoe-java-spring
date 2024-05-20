@@ -3,6 +3,7 @@ package com.example.shopshoejavaspring.repository;
 import com.example.shopshoejavaspring.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByUserId(Long userId);
+    List<Order> findByUserId(Long userId, Sort sort);
 
     @Query(value = "select * from orders os where (:orderDate is null or os.order_date = :orderDate)", nativeQuery = true)
     Page<Order> filter(@Param("orderDate")Date orderDate, Pageable pageable);
