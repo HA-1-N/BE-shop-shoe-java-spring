@@ -3,10 +3,8 @@ package com.example.shopshoejavaspring.service;
 import com.example.shopshoejavaspring.dto.cart.AddCartItemDTO;
 import com.example.shopshoejavaspring.dto.cart.CartItemDTO;
 import com.example.shopshoejavaspring.dto.cart.RemoveFromCartDTO;
-import com.example.shopshoejavaspring.entity.Cart;
-import com.example.shopshoejavaspring.entity.CartItem;
-import com.example.shopshoejavaspring.entity.Product;
-import com.example.shopshoejavaspring.entity.User;
+import com.example.shopshoejavaspring.dto.cart.UpdateCartDTO;
+import com.example.shopshoejavaspring.entity.*;
 import com.example.shopshoejavaspring.mapper.CartItemMapper;
 import com.example.shopshoejavaspring.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -102,5 +100,26 @@ public class CartService {
     public void clearCart(Long userId) {
         List<CartItem> cartItems = cartItemRepository.findByCartUserId(userId);
         cartItemRepository.deleteAll(cartItems);
+    }
+
+    public UpdateCartDTO updateProductCart(UpdateCartDTO updateCartDTO) {
+        CartItem cartItem = cartItemRepository.findById(updateCartDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        ProductQuantity productQuantity = productRepository.getProductQuantity(cartItem.getProduct().getId(), cartItem.getColorId(), cartItem.getSizeId());
+
+        if (updateCartDTO.getQuantity() > productQuantity.getQuantity()) {
+            throw new RuntimeException("Số lượng sản phẩm trong kho không đủ");
+        }
+
+        if (updateCartDTO.getQuantity() < cartItem.getQuantity()) {
+            productQuantity.setQuantity(productQuantity.getQuantity() + cartItem.getQuantity() - updateCartDTO.getQuantity());
+        } else {
+            productQuantity.setQuantity(productQuantity.getQuantity() - updateCartDTO.getQuantity() + cartItem.getQuantity());
+        }
+
+        cartItem.setQuantity(updateCartDTO.getQuantity());
+        cartItemRepository.save(cartItem);
+        return updateCartDTO;
     }
 }

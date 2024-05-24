@@ -1,9 +1,6 @@
 package com.example.shopshoejavaspring.resource;
 
-import com.example.shopshoejavaspring.dto.cart.AddCartItemDTO;
-import com.example.shopshoejavaspring.dto.cart.CartDTO;
-import com.example.shopshoejavaspring.dto.cart.CartItemDTO;
-import com.example.shopshoejavaspring.dto.cart.RemoveFromCartDTO;
+import com.example.shopshoejavaspring.dto.cart.*;
 import com.example.shopshoejavaspring.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +24,12 @@ public class CartResource {
         return ResponseEntity.ok().body(result);
     }
 
+    @PostMapping("/update-cart")
+    public ResponseEntity<UpdateCartDTO> updateProductCart(@RequestBody UpdateCartDTO updateCartDTO) {
+        log.info("REST request to update product cart : {}", updateCartDTO);
+        UpdateCartDTO result = cartService.updateProductCart(updateCartDTO);
+        return ResponseEntity.ok().body(result);
+    }
 
     @PostMapping("/remove-from-cart")
     public ResponseEntity<String> removeFromCart(@RequestBody RemoveFromCartDTO removeFromCartDTO) {
