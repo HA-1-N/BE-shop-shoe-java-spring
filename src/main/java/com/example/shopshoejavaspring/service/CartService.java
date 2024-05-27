@@ -8,6 +8,7 @@ import com.example.shopshoejavaspring.entity.*;
 import com.example.shopshoejavaspring.mapper.CartItemMapper;
 import com.example.shopshoejavaspring.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartService {
 
     private final CartRepository cartRepository;
@@ -26,6 +28,8 @@ public class CartService {
     private final UserRepository userRepository;
 
     private final ProductRepository productRepository;
+
+    private final ProductQuantityRepository productQuantityRepository;
 
     private final CartItemMapper cartItemMapper;
 
@@ -106,9 +110,8 @@ public class CartService {
         CartItem cartItem = cartItemRepository.findById(updateCartDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
 
-        ProductQuantity productQuantity = productRepository.getProductQuantity(cartItem.getProduct().getId(), cartItem.getColorId(), cartItem.getSizeId());
-
-        if (updateCartDTO.getQuantity() > productQuantity.getQuantity()) {
+        ProductQuantity productQuantity = productQuantityRepository.getProductQuantity(updateCartDTO.getProductId(), cartItem.getColorId(), cartItem.getSizeId());
+        if (productQuantity.getQuantity() == 0 && updateCartDTO.getQuantity() > cartItem.getQuantity()) {
             throw new RuntimeException("Số lượng sản phẩm trong kho không đủ");
         }
 

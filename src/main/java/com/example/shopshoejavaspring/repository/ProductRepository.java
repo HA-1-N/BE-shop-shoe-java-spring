@@ -76,5 +76,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                 @Param("maxPrice") Double maxPrice,
                                 Pageable pageable);
 
-    ProductQuantity getProductQuantity(Long id, Long colorId, Long sizeId);
 }
