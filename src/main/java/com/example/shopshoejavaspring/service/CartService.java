@@ -58,6 +58,11 @@ public class CartService {
                         && item.getSizeId().equals(addCartItemDTO.getSizeId()))
                 .findFirst();
 
+        ProductQuantity productQuantity = productQuantityRepository.getProductQuantity(addCartItemDTO.getProductId(), addCartItemDTO.getColorId(), addCartItemDTO.getSizeId());
+
+        if (productQuantity == null || productQuantity.getQuantity() < addCartItemDTO.getQuantity()) {
+            throw new RuntimeException("Product quantity not enough");
+        }
 
         if (existCartItemOpt.isPresent()) {
             CartItem existCartItem = existCartItemOpt.get();
@@ -70,13 +75,27 @@ public class CartService {
             cartItem.setQuantity(addCartItemDTO.getQuantity());
             cartItem.setColorId(addCartItemDTO.getColorId());
             cartItem.setSizeId(addCartItemDTO.getSizeId());
+            productQuantity.setQuantity(productQuantity.getQuantity() - addCartItemDTO.getQuantity());
             cartItemRepository.save(cartItem);
         }
         return addCartItemDTO;
     }
 
     public void removeFromCart(RemoveFromCartDTO removeFromCartDTO) {
-        cartItemRepository.deleteById(removeFromCartDTO.getCartItemId());
+
+        // This is the original code
+        // CartItem cartItem = cartItemRepository.findById(removeFromCartDTO.getCartItemId())
+        //         .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        // cartItemRepository.delete(cartItem);
+
+        // This is the modified code
+        CartItem cartItem = cartItemRepository.findById(removeFromCartDTO.getCartItemId())
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+        ProductQuantity productQuantity = productQuantityRepository.getProductQuantity(cartItem.getProduct().getId(), cartItem.getColorId(), cartItem.getSizeId());
+        productQuantity.setQuantity(productQuantity.getQuantity() + cartItem.getQuantity());
+        cartItemRepository.delete(cartItem);
+
+//        cartItemRepository.deleteById(removeFromCartDTO.getCartItemId());
     }
 
     public List<CartItemDTO> getCartByUserId(Long userId) {
