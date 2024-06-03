@@ -90,6 +90,14 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<UserPayment> userPayments;
 
+//    @OneToOne(mappedBy = "user")
+//    @JsonIgnore
+//    private RefreshToken refreshToken;
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private ForgotPassword forgotPassword;
+
     public Set<Role> getRoles() {
         return roles;
     }

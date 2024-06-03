@@ -1,5 +1,7 @@
 package com.example.shopshoejavaspring.resource;
 
+import com.example.shopshoejavaspring.dto.email.EmailDTO;
+import com.example.shopshoejavaspring.dto.email.VerifyOtpEmailDTO;
 import com.example.shopshoejavaspring.dto.refreshToken.RefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.refreshToken.RequestRefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
@@ -54,11 +56,19 @@ public class AuthenticationResource {
     }
 
     @GetMapping("/verify-email")
-    public ResponseEntity<Boolean> verifyEmail(@RequestParam("email") String email) {
+    public ResponseEntity<String> verifyEmail(@RequestParam("email") String email) {
         log.debug("BEGIN - /api/auth/verify-email");
-        Boolean isExist = authenticationService.verifyEmail(email);
+        authenticationService.verifyEmail(email);
         log.debug("END - /api/auth/verify-email");
-        return ResponseEntity.status(HttpStatus.OK).body(isExist);
+        return ResponseEntity.status(HttpStatus.OK).body("Verify email success");
+    }
+
+    @PostMapping("/verify-otp-email")
+    public ResponseEntity<String> verifyEmail(@RequestBody VerifyOtpEmailDTO verifyOtpEmailDTO) {
+        log.debug("BEGIN - /api/auth/verify-email");
+        authenticationService.verifyOtpEmail(verifyOtpEmailDTO);
+        log.debug("END - /api/auth/verify-email");
+        return ResponseEntity.status(HttpStatus.OK).body("Verify email success");
     }
 
     @PostMapping("/change-password")
@@ -98,5 +108,21 @@ public class AuthenticationResource {
         refreshTokenService.deleteByToken(refreshToken);
         log.debug("END - /api/auth/logout");
         return ResponseEntity.status(HttpStatus.OK).body("Logout success");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
+        log.debug("BEGIN - /api/auth/forgot-password");
+        authenticationService.forgotPassword(email);
+        log.debug("END - /api/auth/forgot-password");
+        return ResponseEntity.status(HttpStatus.OK).body("Forgot password success");
+    }
+
+    @PostMapping("/send-email")
+    public ResponseEntity<String> sendEmail(@RequestBody EmailDTO email) {
+        log.debug("BEGIN - /api/auth/send-email");
+        authenticationService.sendEmail(email);
+        log.debug("END - /api/auth/send-email");
+        return ResponseEntity.status(HttpStatus.OK).body("Send email success");
     }
 }
