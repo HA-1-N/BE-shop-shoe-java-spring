@@ -1,31 +1,38 @@
 package com.example.shopshoejavaspring.service;
 
+import com.example.shopshoejavaspring.dto.email.EmailDTO;
+import com.example.shopshoejavaspring.dto.email.VerifyOtpEmailDTO;
 import com.example.shopshoejavaspring.dto.refreshToken.RequestRefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
 import com.example.shopshoejavaspring.dto.user.ChangePasswordDTO;
 import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
 import com.example.shopshoejavaspring.dto.user.UserDTO;
 import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
+import com.example.shopshoejavaspring.entity.ForgotPassword;
 import com.example.shopshoejavaspring.entity.RefreshToken;
 import com.example.shopshoejavaspring.entity.Role;
 import com.example.shopshoejavaspring.entity.User;
+import com.example.shopshoejavaspring.repository.ForgotPasswordRepository;
 import com.example.shopshoejavaspring.repository.RoleRepository;
 import com.example.shopshoejavaspring.repository.UserRepository;
 import com.example.shopshoejavaspring.utils.FileStorageService;
 import com.example.shopshoejavaspring.utils.config.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,6 +53,10 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     private final RefreshTokenService refreshTokenService;
+
+    private final JavaMailSender javaMailSender;
+
+    private final ForgotPasswordRepository forgotPasswordRepository;
 
     public UserDTO login(UserLoginDTO userLoginDTO) {
         authenticationManager.authenticate(
@@ -136,8 +147,43 @@ public class AuthenticationService {
         return user;
     }
 
-    public Boolean verifyEmail(String email) {
-        return userRepository.existsByEmail(email);
+    public String verifyEmail(String email) {
+
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Please provide a valid email address"));
+
+        Long otp = otpGenerator();
+        EmailDTO emailDTO = new EmailDTO();
+        emailDTO.setTo(email);
+        emailDTO.setSubject("Verify Email");
+        emailDTO.setBody("Your OTP is: " + otp);
+
+        ForgotPassword forgotPassword = new ForgotPassword();
+        forgotPassword.setOtp(otp);
+        forgotPassword.setExpiredTime(new Date(System.currentTimeMillis() + 70 * 1000));
+        forgotPassword.setUser(user);
+        forgotPasswordRepository.save(forgotPassword);
+
+        sendEmail(emailDTO);
+
+        return "OTP has been sent to your email" + otp.toString();
+    }
+
+    public void verifyOtpEmail(VerifyOtpEmailDTO verifyOtpEmailDTO) {
+
+        User user = userRepository.findByEmail(verifyOtpEmailDTO.getEmail()).orElseThrow(() -> new RuntimeException("Please provide a valid email address"));
+
+        ForgotPassword forgotPassword = forgotPasswordRepository.findByOtpAndUser(verifyOtpEmailDTO.getOtp(), user).orElseThrow(() -> new RuntimeException("Invalid OTP for email " + verifyOtpEmailDTO.getEmail()));
+        if (forgotPassword.getExpiredTime().before(Date.from(Instant.now()))) {
+            throw new RuntimeException("OTP is expired");
+        }
+        forgotPasswordRepository.delete(forgotPassword);
+    }
+
+    private Long otpGenerator() {
+        return (long) (Math.random() * 1000000);
+    }
+
+    public void forgotPassword(String email) {
     }
 
     public String resetPassword(ResetPasswordDTO resetPasswordDTO) {
@@ -158,5 +204,29 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         userRepository.save(user);
     }
+
+
+    public void sendEmail(EmailDTO emailDTO) {
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(emailDTO.getTo());
+        message.setSubject(emailDTO.getSubject());
+        message.setText(emailDTO.getBody());
+
+        javaMailSender.send(message);
+
+//        MimeMessage message = javaMailSender.createMimeMessage();
+//        try {
+//            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+//            helper.setTo(emailDTO.getTo());
+//            helper.setSubject(emailDTO.getSubject());
+//            helper.setText(emailDTO.getBody(), true);
+//            javaMailSender.send(message);
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//        }
+
+    }
+
 
 }
