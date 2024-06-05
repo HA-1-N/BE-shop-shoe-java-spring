@@ -151,6 +151,9 @@ public class AuthenticationService {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Please provide a valid email address"));
 
+        List<ForgotPassword> existingForgotPasswords = forgotPasswordRepository.findByUser(user);
+        forgotPasswordRepository.deleteAll(existingForgotPasswords);
+
         Long otp = otpGenerator();
         EmailDTO emailDTO = new EmailDTO();
         emailDTO.setTo(email);
@@ -159,7 +162,7 @@ public class AuthenticationService {
 
         ForgotPassword forgotPassword = new ForgotPassword();
         forgotPassword.setOtp(otp);
-        forgotPassword.setExpiredTime(new Date(System.currentTimeMillis() + 70 * 1000));
+        forgotPassword.setExpiredTime(new Date(System.currentTimeMillis() + 60 * 1000));
         forgotPassword.setUser(user);
         forgotPasswordRepository.save(forgotPassword);
 
