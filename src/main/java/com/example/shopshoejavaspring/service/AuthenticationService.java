@@ -4,10 +4,7 @@ import com.example.shopshoejavaspring.dto.email.EmailDTO;
 import com.example.shopshoejavaspring.dto.email.VerifyOtpEmailDTO;
 import com.example.shopshoejavaspring.dto.refreshToken.RequestRefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
-import com.example.shopshoejavaspring.dto.user.ChangePasswordDTO;
-import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
-import com.example.shopshoejavaspring.dto.user.UserDTO;
-import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
+import com.example.shopshoejavaspring.dto.user.*;
 import com.example.shopshoejavaspring.entity.ForgotPassword;
 import com.example.shopshoejavaspring.entity.RefreshToken;
 import com.example.shopshoejavaspring.entity.Role;
@@ -147,6 +144,46 @@ public class AuthenticationService {
         return user;
     }
 
+
+    public User mobileRegister(UserDTO userDTO, MultipartFile file) throws IOException {
+        User user = new User();
+        user.setName(userDTO.getName());
+
+        Optional<User> checkEmailUser = userRepository.findByEmail(userDTO.getEmail());
+        if (checkEmailUser.isPresent()) {
+            throw new RuntimeException("Email is exist");
+        } else {
+            user.setEmail(userDTO.getEmail());
+        }
+
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
+        Optional<User> checkPhoneUser = userRepository.findUserByPhoneContains(userDTO.getPhone());
+        if (checkPhoneUser.isPresent()) {
+            throw new RuntimeException("Phone is exist");
+        } else {
+            user.setPhone(userDTO.getPhone());
+        }
+
+        user.setGender(userDTO.getGender());
+        user.setAge(userDTO.getAge());
+        user.setPrefix(userDTO.getPrefix());
+        user.setDateOfBirth(userDTO.getDateOfBirth());
+
+        String imageUrl = fileStorageService.uploadImage(file);
+        user.setImage(imageUrl);
+
+        Set<Role> roles = userDTO.getRoleIds().stream() //get roleIds from userDTO
+                .map(roleId -> roleRepository.findById(roleId)) //get role by roleId
+                .filter(Optional::isPresent) // filter role is present
+                .map(Optional::get) // get role
+                .collect(Collectors.toSet()); // collect to set
+
+        user.setRoles(roles);
+        userRepository.save(user);
+        return user;
+    }
+
     public String verifyEmail(String email) {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Please provide a valid email address"));
@@ -229,6 +266,22 @@ public class AuthenticationService {
 //            e.printStackTrace();
 //        }
 
+    }
+
+    public User updateRole(Long id, UserUpdateRoleDTO userUpdateRoleDTOS) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            Set<Role> roles = userUpdateRoleDTOS.getRoleIds().stream()
+                    .map(roleId -> roleRepository.findById(roleId))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet());
+            user.get().setRoles(roles);
+            userRepository.save(user.get());
+            return user.get();
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
 
