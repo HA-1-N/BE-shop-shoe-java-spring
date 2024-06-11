@@ -1,12 +1,11 @@
 package com.example.shopshoejavaspring.resource;
 
+import com.example.shopshoejavaspring.dto.email.EmailDTO;
+import com.example.shopshoejavaspring.dto.email.VerifyOtpEmailDTO;
 import com.example.shopshoejavaspring.dto.refreshToken.RefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.refreshToken.RequestRefreshTokenDTO;
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
-import com.example.shopshoejavaspring.dto.user.ChangePasswordDTO;
-import com.example.shopshoejavaspring.dto.user.ResetPasswordDTO;
-import com.example.shopshoejavaspring.dto.user.UserDTO;
-import com.example.shopshoejavaspring.dto.user.UserLoginDTO;
+import com.example.shopshoejavaspring.dto.user.*;
 import com.example.shopshoejavaspring.entity.RefreshToken;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.service.AuthenticationService;
@@ -45,6 +44,17 @@ public class AuthenticationResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
     }
 
+    @PostMapping("/mobile/register")
+    public ResponseEntity<UserDTO> mobileRegister(@RequestParam(value = "file", required = false) MultipartFile file, @RequestPart("data") UserDTO userDTO) throws IOException {
+        log.debug("BEGIN - /api/user/register");
+        User user = authenticationService.mobileRegister(userDTO, file);
+        userDTO.setId(user.getId());
+        userDTO.setRoles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getCode(), role.getText())).collect(Collectors.toList()));
+        log.debug("END - /api/user/register");
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+    }
+
+
     @PostMapping("/login")
     public ResponseEntity<UserDTO> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         log.debug("BEGIN - /api/auth/login");
@@ -54,11 +64,19 @@ public class AuthenticationResource {
     }
 
     @GetMapping("/verify-email")
-    public ResponseEntity<Boolean> verifyEmail(@RequestParam("email") String email) {
+    public ResponseEntity<String> verifyEmail(@RequestParam("email") String email) {
         log.debug("BEGIN - /api/auth/verify-email");
-        Boolean isExist = authenticationService.verifyEmail(email);
+        authenticationService.verifyEmail(email);
         log.debug("END - /api/auth/verify-email");
-        return ResponseEntity.status(HttpStatus.OK).body(isExist);
+        return ResponseEntity.status(HttpStatus.OK).body("Verify email success");
+    }
+
+    @PostMapping("/verify-otp-email")
+    public ResponseEntity<String> verifyEmail(@RequestBody VerifyOtpEmailDTO verifyOtpEmailDTO) {
+        log.debug("BEGIN - /api/auth/verify-email");
+        authenticationService.verifyOtpEmail(verifyOtpEmailDTO);
+        log.debug("END - /api/auth/verify-email");
+        return ResponseEntity.status(HttpStatus.OK).body("Verify email success");
     }
 
     @PostMapping("/change-password")
@@ -98,5 +116,32 @@ public class AuthenticationResource {
         refreshTokenService.deleteByToken(refreshToken);
         log.debug("END - /api/auth/logout");
         return ResponseEntity.status(HttpStatus.OK).body("Logout success");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam("email") String email) {
+        log.debug("BEGIN - /api/auth/forgot-password");
+        authenticationService.forgotPassword(email);
+        log.debug("END - /api/auth/forgot-password");
+        return ResponseEntity.status(HttpStatus.OK).body("Forgot password success");
+    }
+
+    @PostMapping("/send-email")
+    public ResponseEntity<String> sendEmail(@RequestBody EmailDTO email) {
+        log.debug("BEGIN - /api/auth/send-email");
+        authenticationService.sendEmail(email);
+        log.debug("END - /api/auth/send-email");
+        return ResponseEntity.status(HttpStatus.OK).body("Send email success");
+    }
+
+    @PostMapping("/update-role/{id}")
+    public ResponseEntity<UserDTO> updateRole(@PathVariable("id") Long id, @RequestBody UserUpdateRoleDTO userUpdateRoleDTOS) {
+        log.debug("BEGIN - /api/auth/update-role/{}", id);
+        User user = authenticationService.updateRole(id, userUpdateRoleDTOS);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setRoles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getCode(), role.getText())).collect(Collectors.toList()));
+        log.debug("END - /api/auth/update-role/{}", id);
+        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 }

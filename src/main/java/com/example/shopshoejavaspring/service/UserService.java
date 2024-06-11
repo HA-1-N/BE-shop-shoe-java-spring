@@ -1,11 +1,7 @@
 package com.example.shopshoejavaspring.service;
 
 import com.cloudinary.Cloudinary;
-import com.example.shopshoejavaspring.dto.role.RoleDTO;
-import com.example.shopshoejavaspring.dto.user.FilterUserDTO;
-import com.example.shopshoejavaspring.dto.user.ListUserDTO;
-import com.example.shopshoejavaspring.dto.user.UserDTO;
-import com.example.shopshoejavaspring.dto.user.UserDetailUpdateDTO;
+import com.example.shopshoejavaspring.dto.user.*;
 import com.example.shopshoejavaspring.entity.Role;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.mapper.UserMapper;
@@ -178,6 +174,7 @@ public class UserService {
     public Long getTotalUser() {
         return userRepository.getTotalUser();
     }
+
 
 //    public Optional<UserDTO> getUserWithAuthorities() {
 //        Optional<User> userOptional = SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneWithAuthoritiesByEmailIgnoreCase);
