@@ -27,8 +27,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(:gender is null or u.gender = :gender) and " +
             "(:phone is null or u.phone like concat ('%', :phone ,'%')) and " +
             "(:dateOfBirth is null or u.date_of_birth = :dateOfBirth) "
-//            +
-//            "group by u.id"
+            +
+            "group by u.id"
             ,
             nativeQuery = true)
     Page<User> filterUser(
