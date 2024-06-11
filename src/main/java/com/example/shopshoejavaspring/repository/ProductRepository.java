@@ -3,6 +3,7 @@ package com.example.shopshoejavaspring.repository;
 import com.example.shopshoejavaspring.dto.product.FilterProductDTO;
 import com.example.shopshoejavaspring.dto.product.ProductDTO;
 import com.example.shopshoejavaspring.entity.Product;
+import com.example.shopshoejavaspring.entity.ProductQuantity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -74,4 +75,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                 @Param("minPrice") Double minPrice,
                                 @Param("maxPrice") Double maxPrice,
                                 Pageable pageable);
+
 }

@@ -1,10 +1,7 @@
 package com.example.shopshoejavaspring.resource;
 
 import com.example.shopshoejavaspring.dto.role.RoleDTO;
-import com.example.shopshoejavaspring.dto.user.FilterUserDTO;
-import com.example.shopshoejavaspring.dto.user.ListUserDTO;
-import com.example.shopshoejavaspring.dto.user.UserDTO;
-import com.example.shopshoejavaspring.dto.user.UserDetailUpdateDTO;
+import com.example.shopshoejavaspring.dto.user.*;
 import com.example.shopshoejavaspring.entity.User;
 import com.example.shopshoejavaspring.service.UserService;
 import javafx.scene.control.Pagination;
@@ -105,8 +102,4 @@ public class UserResource {
         log.debug("END - /api/user/total-user");
         return ResponseEntity.status(HttpStatus.OK).body(totalUser);
     }
-
-
-
-
 }
