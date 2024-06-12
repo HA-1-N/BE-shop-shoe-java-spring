@@ -27,7 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -144,36 +149,40 @@ public class AuthenticationService {
         return user;
     }
 
+    public User mobileRegister(UserMobileRegisterDTO userMobileRegisterDTO) throws URISyntaxException, IOException {
 
-    public User mobileRegister(UserDTO userDTO, MultipartFile file) throws IOException {
         User user = new User();
-        user.setName(userDTO.getName());
+        user.setName(userMobileRegisterDTO.getName());
 
-        Optional<User> checkEmailUser = userRepository.findByEmail(userDTO.getEmail());
+        Optional<User> checkEmailUser = userRepository.findByEmail(userMobileRegisterDTO.getEmail());
         if (checkEmailUser.isPresent()) {
             throw new RuntimeException("Email is exist");
         } else {
-            user.setEmail(userDTO.getEmail());
+            user.setEmail(userMobileRegisterDTO.getEmail());
         }
 
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setPassword(passwordEncoder.encode(userMobileRegisterDTO.getPassword()));
 
-        Optional<User> checkPhoneUser = userRepository.findUserByPhoneContains(userDTO.getPhone());
+        Optional<User> checkPhoneUser = userRepository.findUserByPhoneContains(userMobileRegisterDTO.getPhone());
         if (checkPhoneUser.isPresent()) {
             throw new RuntimeException("Phone is exist");
         } else {
-            user.setPhone(userDTO.getPhone());
+            user.setPhone(userMobileRegisterDTO.getPhone());
         }
 
-        user.setGender(userDTO.getGender());
-        user.setAge(userDTO.getAge());
-        user.setPrefix(userDTO.getPrefix());
-        user.setDateOfBirth(userDTO.getDateOfBirth());
+        user.setGender(userMobileRegisterDTO.getGender());
+        user.setAge(userMobileRegisterDTO.getAge());
+        user.setPrefix(userMobileRegisterDTO.getPrefix());
+        user.setDateOfBirth(userMobileRegisterDTO.getDateOfBirth());
 
-        String imageUrl = fileStorageService.uploadImage(file);
-        user.setImage(imageUrl);
+        // Xử lý ảnh từ đường dẫn cục bộ
+//        String imagePath = userMobileRegisterDTO.getImage();
+//        Path path = Paths.get(new URI(imagePath).getPath());
+//        File file = path.toFile();
+//        String imageUrl = fileStorageService.uploadFileImage(file);
+//        user.setImage(imageUrl);
 
-        Set<Role> roles = userDTO.getRoleIds().stream() //get roleIds from userDTO
+        Set<Role> roles = userMobileRegisterDTO.getRoleIds().stream() //get roleIds from userDTO
                 .map(roleId -> roleRepository.findById(roleId)) //get role by roleId
                 .filter(Optional::isPresent) // filter role is present
                 .map(Optional::get) // get role
@@ -283,6 +292,7 @@ public class AuthenticationService {
             throw new RuntimeException("User not found");
         }
     }
+
 
 
 }
