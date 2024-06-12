@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -34,7 +35,7 @@ public class AuthenticationResource {
 
     private final JwtService jwtService;
 
-    @PostMapping("/register")
+    @PostMapping(value = "/register")
     public ResponseEntity<UserDTO> register(@RequestParam(value = "file", required = false) MultipartFile file, @Valid @RequestPart("data") UserDTO userDTO) throws IOException {
         log.debug("BEGIN - /api/user/register");
         User user = authenticationService.register(userDTO, file);
@@ -45,13 +46,11 @@ public class AuthenticationResource {
     }
 
     @PostMapping("/mobile/register")
-    public ResponseEntity<UserDTO> mobileRegister(@RequestParam(value = "file", required = false) MultipartFile file, @RequestPart("data") UserDTO userDTO) throws IOException {
-        log.debug("BEGIN - /api/user/register");
-        User user = authenticationService.mobileRegister(userDTO, file);
-        userDTO.setId(user.getId());
-        userDTO.setRoles(user.getRoles().stream().map(role -> new RoleDTO(role.getId(), role.getCode(), role.getText())).collect(Collectors.toList()));
-        log.debug("END - /api/user/register");
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+    public ResponseEntity<User> mobileRegister(@RequestBody UserMobileRegisterDTO userMobileRegisterDTO) throws IOException, URISyntaxException {
+        log.debug("BEGIN - /api/auth/mobile/register");
+        User user = authenticationService.mobileRegister(userMobileRegisterDTO);
+        log.debug("END - /api/auth/mobile/register");
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
 

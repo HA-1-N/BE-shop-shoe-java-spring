@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,6 +42,11 @@ public class FileStorageService {
 
     public String uploadImage(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+        return uploadResult.get("url").toString();
+    }
+
+    public String uploadFileImage(File file) throws IOException {
+        Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
         return uploadResult.get("url").toString();
     }
 
