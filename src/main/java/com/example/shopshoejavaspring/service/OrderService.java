@@ -20,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -65,13 +62,18 @@ public class OrderService {
 
         UserAddress userAddress = new UserAddress();
 
-        userAddress.setUser(user);
-        userAddress.setName(orderCheckoutDTO.getName());
-        userAddress.setAddress(orderCheckoutDTO.getAddress());
-        userAddress.setCity(orderCheckoutDTO.getCity());
-        userAddress.setCountry(orderCheckoutDTO.getCountry());
-        userAddress.setPhone(orderCheckoutDTO.getPhone());
-        userAddress.setPrefix(orderCheckoutDTO.getPrefix());
+        if (orderCheckoutDTO.getUserAddressId() == null) {
+            userAddress.setUser(user);
+            userAddress.setName(orderCheckoutDTO.getName());
+            userAddress.setAddress(orderCheckoutDTO.getAddress());
+            userAddress.setCity(orderCheckoutDTO.getCity());
+            userAddress.setCountry(orderCheckoutDTO.getCountry());
+            userAddress.setPhone(orderCheckoutDTO.getPhone());
+            userAddress.setPrefix(orderCheckoutDTO.getPrefix());
+            userAddressRepository.save(userAddress);
+        } else {
+            userAddress = userAddressRepository.findById(orderCheckoutDTO.getUserAddressId()).orElseThrow(() -> new RuntimeException("User address not found"));
+        }
 
         order.setUserAddress(userAddress);
 
@@ -95,7 +97,6 @@ public class OrderService {
         userPaymentRepository.save(userPayment);
 
         order.setUserPayment(userPayment);
-        userAddressRepository.save(userAddress);
 
 //        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 //        Instant instant = Instant.from(formatter.parse(orderCheckoutDTO.getOrderDate().toString()));
