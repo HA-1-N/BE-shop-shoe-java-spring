@@ -17,6 +17,8 @@ public class OrderCheckoutDTO {
 
     private Long userId;
 
+    private Long userAddressId;
+
     private String name;
 
     private String address;
